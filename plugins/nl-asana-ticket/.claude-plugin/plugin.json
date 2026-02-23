@@ -1,0 +1,14 @@
+{
+  "name": "nl-asana-ticket",
+  "version": "1.0.0",
+  "description": "Standardized Asana ticket creation with project routing, custom fields, and formatting for Crescendo Lab",
+  "author": {
+    "name": "noellch",
+    "url": "https://github.com/noellch"
+  },
+  "homepage": "https://github.com/noellch/noel-claude-code-marketplace",
+  "repository": "https://github.com/noellch/noel-claude-code-marketplace",
+  "license": "MIT",
+  "keywords": ["asana", "ticket", "task", "bug", "crescendo-lab"],
+  "skills": "./skills/"
+}

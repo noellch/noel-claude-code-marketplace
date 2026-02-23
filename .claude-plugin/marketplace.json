@@ -13,6 +13,13 @@
       "description": "Resolve PR review comments with structured workflow: fetch, evaluate, implement, commit, and reply with commit SHA links",
       "license": "MIT",
       "keywords": ["pr", "review", "comments", "resolve", "github"]
+    },
+    {
+      "name": "nl-asana-ticket",
+      "source": "./plugins/nl-asana-ticket",
+      "description": "Standardized Asana ticket creation with project routing, custom fields, and formatting for Crescendo Lab",
+      "license": "MIT",
+      "keywords": ["asana", "ticket", "task", "bug", "crescendo-lab"]
     }
   ]
 }

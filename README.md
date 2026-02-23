@@ -29,6 +29,20 @@ Features:
 - Reply to specific comment with clickable commit SHA link
 - Tracking table with status updates throughout the process
 
+### nl-asana-ticket
+
+Standardized Asana ticket creation with project routing, custom fields, and formatting for Crescendo Lab.
+
+```bash
+/plugin install nl-asana-ticket@noel
+```
+
+Features:
+- Automatic project routing (MAAC / QA Bug Tracking / Technical Debt)
+- Correct custom field GIDs per project
+- Consistent title prefixes and description templates
+- Default assignee and pod always set
+
 ## License
 
 MIT
