@@ -1,6 +1,7 @@
 ---
 name: pr-comment-resolve
 description: Use when the user asks to resolve, address, or fix PR review comments. Triggers on "resolve PR comments", "address review feedback", "fix PR issues"
+userInvocable: resolve-pr
 ---
 
 # PR Comment Resolution
