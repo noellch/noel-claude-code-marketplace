@@ -1,0 +1,8 @@
+{
+  "name": "pr-comment-resolve",
+  "version": "1.0.0",
+  "description": "Resolve PR review comments with structured workflow: fetch, evaluate, implement, commit, and reply with commit SHA links.",
+  "author": {
+    "name": "noellch"
+  }
+}
