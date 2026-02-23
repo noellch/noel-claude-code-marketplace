@@ -3,11 +3,15 @@
   "owner": {
     "name": "noellch"
   },
+  "metadata": {
+    "description": "Claude Code plugins by noellch"
+  },
   "plugins": [
     {
-      "name": "pr-comment-resolve",
-      "source": "./plugins/pr-comment-resolve",
-      "description": "Resolve PR review comments with structured workflow: fetch, evaluate, implement, commit, and reply with commit SHA links.",
+      "name": "nl-pr-comment-resolve",
+      "source": "./plugins/nl-pr-comment-resolve",
+      "description": "Resolve PR review comments with structured workflow: fetch, evaluate, implement, commit, and reply with commit SHA links",
+      "license": "MIT",
       "keywords": ["pr", "review", "comments", "resolve", "github"]
     }
   ]

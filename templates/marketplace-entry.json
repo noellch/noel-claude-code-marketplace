@@ -1,0 +1,7 @@
+{
+  "name": "nl-PLUGIN_NAME",
+  "source": "./plugins/nl-PLUGIN_NAME",
+  "description": "PLUGIN_DESCRIPTION",
+  "license": "MIT",
+  "keywords": ["KEYWORD1", "KEYWORD2"]
+}

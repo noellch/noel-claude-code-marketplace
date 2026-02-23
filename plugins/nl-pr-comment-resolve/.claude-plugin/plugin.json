@@ -1,0 +1,14 @@
+{
+  "name": "nl-pr-comment-resolve",
+  "version": "1.0.0",
+  "description": "Resolve PR review comments with structured workflow: fetch, evaluate, implement, commit, and reply with commit SHA links",
+  "author": {
+    "name": "noellch",
+    "url": "https://github.com/noellch"
+  },
+  "homepage": "https://github.com/noellch/noel-claude-code-marketplace",
+  "repository": "https://github.com/noellch/noel-claude-code-marketplace",
+  "license": "MIT",
+  "keywords": ["pr", "review", "comments", "resolve", "github"],
+  "skills": "./skills/"
+}

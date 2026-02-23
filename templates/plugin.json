@@ -1,0 +1,14 @@
+{
+  "name": "PLUGIN_NAME",
+  "version": "1.0.0",
+  "description": "PLUGIN_DESCRIPTION",
+  "author": {
+    "name": "noellch",
+    "url": "https://github.com/noellch"
+  },
+  "homepage": "https://github.com/noellch/noel-claude-code-marketplace",
+  "repository": "https://github.com/noellch/noel-claude-code-marketplace",
+  "license": "MIT",
+  "keywords": ["KEYWORD1", "KEYWORD2"],
+  "skills": "./skills/"
+}
