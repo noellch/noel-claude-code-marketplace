@@ -31,17 +31,28 @@ Features:
 
 ### nl-asana-ticket
 
-Standardized Asana ticket creation with project routing, custom fields, and formatting for Crescendo Lab.
+Asana ticket creation and issue investigation for Crescendo Lab.
 
 ```bash
 /plugin install nl-asana-ticket@noel
 ```
 
-Features:
+**Skills:**
+
+| Skill | Trigger | Description |
+|-------|---------|-------------|
+| `asana-ticket` | "create ticket", "open bug" | Standardized ticket creation with project routing and custom fields |
+| `analyze-issue` | "分析 issue", "analyze ticket" | Systematic investigation workflow for Support tickets |
+
+**asana-ticket features:**
 - Automatic project routing (MAAC / QA Bug Tracking / Technical Debt)
 - Correct custom field GIDs per project
 - Consistent title prefixes and description templates
-- Default assignee and pod always set
+
+**analyze-issue features:**
+- 5-phase investigation: gather context → form hypothesis → verify in code → assess impact → output action items
+- Prevents vague conclusions with required code verification
+- Structured output format with file:line references
 
 ## License
 
