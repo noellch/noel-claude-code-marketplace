@@ -1,9 +1,6 @@
 ---
 name: research-plan-execute
-description: >
-  Use when starting medium-to-large feature development with 3+ independent
-  implementation tasks, before writing any code. Triggers on feature requests
-  requiring codebase understanding, multi-file changes, or cross-module work.
+description: Use when starting medium-to-large feature development with 3+ independent implementation tasks, before writing any code. Triggers on feature requests requiring codebase understanding, multi-file changes, or cross-module work.
 ---
 
 # Research-Plan-Execute
