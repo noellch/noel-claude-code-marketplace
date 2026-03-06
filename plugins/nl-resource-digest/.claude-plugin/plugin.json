@@ -1,0 +1,14 @@
+{
+  "name": "nl-resource-digest",
+  "version": "1.0.0",
+  "description": "Deep analysis of public resources (URLs, articles, GitHub repos, tweets, tech news) with structured summaries, critical opinions, pros/cons, and actionable insights",
+  "author": {
+    "name": "noellch",
+    "url": "https://github.com/noellch"
+  },
+  "homepage": "https://github.com/noellch/noel-claude-code-marketplace",
+  "repository": "https://github.com/noellch/noel-claude-code-marketplace",
+  "license": "MIT",
+  "keywords": ["resource", "digest", "summary", "analysis", "url", "article", "github", "insights"],
+  "skills": "./skills/"
+}
