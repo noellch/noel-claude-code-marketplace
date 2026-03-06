@@ -20,6 +20,13 @@
       "description": "Standardized Asana ticket creation with project routing, custom fields, and formatting for Crescendo Lab",
       "license": "MIT",
       "keywords": ["asana", "ticket", "task", "bug", "crescendo-lab"]
+    },
+    {
+      "name": "nl-resource-digest",
+      "source": "./plugins/nl-resource-digest",
+      "description": "Deep analysis of public resources (URLs, articles, GitHub repos, tweets, tech news) with critical opinions, pros/cons, and actionable insights",
+      "license": "MIT",
+      "keywords": ["resource", "digest", "summary", "analysis", "url", "article", "insights"]
     }
   ]
 }
