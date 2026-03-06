@@ -1,0 +1,14 @@
+{
+  "name": "nl-research-plan-execute",
+  "version": "1.0.0",
+  "description": "Structured feature development workflow combining codebase research, annotated planning with human review cycles, and subagent-driven execution with dual review gates",
+  "author": {
+    "name": "noellch",
+    "url": "https://github.com/noellch"
+  },
+  "homepage": "https://github.com/noellch/noel-claude-code-marketplace",
+  "repository": "https://github.com/noellch/noel-claude-code-marketplace",
+  "license": "MIT",
+  "keywords": ["research", "plan", "execute", "annotation", "review", "subagent", "feature-development", "workflow"],
+  "skills": "./skills/"
+}
