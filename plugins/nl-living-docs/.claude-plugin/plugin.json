@@ -1,0 +1,14 @@
+{
+  "name": "nl-living-docs",
+  "version": "1.0.0",
+  "description": "Detect documentation drift from code changes, produce severity-ranked reports with actionable diff suggestions for API docs, READMEs, and code-level docs",
+  "author": {
+    "name": "noellch",
+    "url": "https://github.com/noellch"
+  },
+  "homepage": "https://github.com/noellch/noel-claude-code-marketplace",
+  "repository": "https://github.com/noellch/noel-claude-code-marketplace",
+  "license": "MIT",
+  "keywords": ["documentation", "drift", "sync", "docs", "audit", "api-docs", "readme", "jsdoc", "living-documentation"],
+  "skills": "./skills/"
+}

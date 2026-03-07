@@ -8,13 +8,6 @@
   },
   "plugins": [
     {
-      "name": "nl-pr-comment-resolve",
-      "source": "./plugins/nl-pr-comment-resolve",
-      "description": "Resolve PR review comments with structured workflow: fetch, evaluate, implement, commit, and reply with commit SHA links",
-      "license": "MIT",
-      "keywords": ["pr", "review", "comments", "resolve", "github"]
-    },
-    {
       "name": "nl-asana-ticket",
       "source": "./plugins/nl-asana-ticket",
       "description": "Standardized Asana ticket creation with project routing, custom fields, and formatting for Crescendo Lab",
@@ -22,11 +15,18 @@
       "keywords": ["asana", "ticket", "task", "bug", "crescendo-lab"]
     },
     {
-      "name": "nl-resource-digest",
-      "source": "./plugins/nl-resource-digest",
-      "description": "Deep analysis of public resources (URLs, articles, GitHub repos, tweets, tech news) with critical opinions, pros/cons, and actionable insights",
+      "name": "nl-living-docs",
+      "source": "./plugins/nl-living-docs",
+      "description": "Detect documentation drift from code changes with severity-ranked reports and actionable diff suggestions",
       "license": "MIT",
-      "keywords": ["resource", "digest", "summary", "analysis", "url", "article", "insights"]
+      "keywords": ["documentation", "drift", "sync", "audit", "api-docs", "readme", "jsdoc", "living-documentation"]
+    },
+    {
+      "name": "nl-pr-comment-resolve",
+      "source": "./plugins/nl-pr-comment-resolve",
+      "description": "Resolve PR review comments with structured workflow: fetch, evaluate, implement, commit, and reply with commit SHA links",
+      "license": "MIT",
+      "keywords": ["pr", "review", "comments", "resolve", "github"]
     },
     {
       "name": "nl-research-plan-execute",
@@ -34,6 +34,13 @@
       "description": "Structured feature development workflow: codebase research, annotated planning with human review cycles, and subagent-driven execution with dual review gates",
       "license": "MIT",
       "keywords": ["research", "plan", "execute", "annotation", "review", "subagent", "feature-development", "workflow"]
+    },
+    {
+      "name": "nl-resource-digest",
+      "source": "./plugins/nl-resource-digest",
+      "description": "Deep analysis of public resources (URLs, articles, GitHub repos, tweets, tech news) with critical opinions, pros/cons, and actionable insights",
+      "license": "MIT",
+      "keywords": ["resource", "digest", "summary", "analysis", "url", "article", "insights"]
     },
     {
       "name": "nl-terminal-diagrams",

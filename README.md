@@ -27,6 +27,19 @@ Asana ticket creation and issue investigation for Crescendo Lab.
 | `asana-ticket` | "create ticket", "open bug" | Standardized ticket creation with project routing and custom fields |
 | `analyze-issue` | "分析 issue", "analyze ticket" | Systematic investigation workflow for Support tickets |
 
+### nl-living-docs
+
+Detect documentation drift from code changes with severity-ranked reports and actionable diff suggestions.
+
+```bash
+/plugin install nl-living-docs@noel
+```
+
+- Systematic drift detection across API docs, READMEs, and code-level docs (JSDoc/docstring)
+- Every finding includes before/after diff suggestions ready to apply
+- Two modes: manual audit (`/living-docs`) and incremental post-commit detection
+- Severity scoring: CRITICAL (causes failures) / WARNING (incomplete) / INFO (cosmetic)
+
 ### nl-pr-comment-resolve
 
 Resolve PR review comments with structured workflow: fetch, evaluate, implement, commit, and reply with commit SHA links.
