@@ -1,0 +1,14 @@
+{
+  "name": "nl-terminal-diagrams",
+  "version": "1.0.0",
+  "description": "Render precise, perfectly-aligned diagrams in the terminal using graph-easy. Covers flowcharts, architecture diagrams, sequence diagrams, and relationship graphs.",
+  "author": {
+    "name": "noellch",
+    "url": "https://github.com/noellch"
+  },
+  "homepage": "https://github.com/noellch/noel-claude-code-marketplace",
+  "repository": "https://github.com/noellch/noel-claude-code-marketplace",
+  "license": "MIT",
+  "keywords": ["diagram", "flowchart", "graph", "terminal", "ascii", "boxart", "graph-easy", "architecture"],
+  "skills": "./skills/"
+}
