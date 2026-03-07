@@ -34,6 +34,13 @@
       "description": "Structured feature development workflow: codebase research, annotated planning with human review cycles, and subagent-driven execution with dual review gates",
       "license": "MIT",
       "keywords": ["research", "plan", "execute", "annotation", "review", "subagent", "feature-development", "workflow"]
+    },
+    {
+      "name": "nl-terminal-diagrams",
+      "source": "./plugins/nl-terminal-diagrams",
+      "description": "Render precise, perfectly-aligned diagrams in the terminal using graph-easy. Covers flowcharts, architecture diagrams, and relationship graphs with Unicode boxart output",
+      "license": "MIT",
+      "keywords": ["diagram", "flowchart", "graph", "terminal", "ascii", "boxart", "graph-easy", "architecture"]
     }
   ]
 }
