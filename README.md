@@ -27,6 +27,20 @@ Asana ticket creation and issue investigation for Crescendo Lab.
 | `asana-ticket` | "create ticket", "open bug" | Standardized ticket creation with project routing and custom fields |
 | `analyze-issue` | "分析 issue", "analyze ticket" | Systematic investigation workflow for Support tickets |
 
+### nl-handle-issue
+
+Single entry point for issue resolution — classifies scope (small/medium/large), orchestrates the right workflow, and ensures every step from investigation to delivery is completed.
+
+```bash
+/plugin install nl-handle-issue@noel
+```
+
+- Auto-classifies issue scope: Quick Fix / Investigate & Fix / Plan & Build
+- Mandatory Investigation Report with root cause, reasoning chain, and confidence level
+- Chains sub-skills automatically (systematic-debugging, analyze-issue, research-plan-execute)
+- Flow upgrade detection: auto-escalates when scope is bigger than expected
+- Never auto-commits — waits for user instruction
+
 ### nl-living-docs
 
 Detect documentation drift from code changes with severity-ranked reports and actionable diff suggestions.
