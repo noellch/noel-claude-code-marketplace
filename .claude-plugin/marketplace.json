@@ -15,6 +15,13 @@
       "keywords": ["asana", "ticket", "task", "bug", "crescendo-lab"]
     },
     {
+      "name": "nl-handle-issue",
+      "source": "./plugins/nl-handle-issue",
+      "description": "Single entry point for issue resolution: classifies scope, orchestrates investigation with mandatory root-cause report, and chains sub-skills from debugging to PR creation",
+      "license": "MIT",
+      "keywords": ["issue", "bug", "fix", "debug", "investigate", "workflow", "dispatcher", "lifecycle"]
+    },
+    {
       "name": "nl-living-docs",
       "source": "./plugins/nl-living-docs",
       "description": "Detect documentation drift from code changes with severity-ranked reports and actionable diff suggestions",
