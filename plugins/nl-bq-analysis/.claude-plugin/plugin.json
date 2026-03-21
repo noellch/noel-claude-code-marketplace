@@ -1,0 +1,14 @@
+{
+  "name": "nl-bq-analysis",
+  "version": "1.0.0",
+  "description": "BigQuery analysis skill with dry-run cost estimation, common query patterns, and Crescendo Lab GCP project routing",
+  "author": {
+    "name": "noellch",
+    "url": "https://github.com/noellch"
+  },
+  "homepage": "https://github.com/noellch/noel-claude-code-marketplace",
+  "repository": "https://github.com/noellch/noel-claude-code-marketplace",
+  "license": "MIT",
+  "keywords": ["bigquery", "bq", "analysis", "gcp", "data", "query", "dry-run"],
+  "skills": "./skills/"
+}

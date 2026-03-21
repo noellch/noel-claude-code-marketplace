@@ -55,6 +55,20 @@
       "description": "Render precise, perfectly-aligned diagrams in the terminal using graph-easy. Covers flowcharts, architecture diagrams, and relationship graphs with Unicode boxart output",
       "license": "MIT",
       "keywords": ["diagram", "flowchart", "graph", "terminal", "ascii", "boxart", "graph-easy", "architecture"]
+    },
+    {
+      "name": "nl-code-review",
+      "source": "./plugins/nl-code-review",
+      "description": "General-purpose code review skill that auto-detects tech stack and applies repo-aware review with optional adversarial pass",
+      "license": "MIT",
+      "keywords": ["code-review", "pr", "review", "adversarial", "quality", "general-purpose"]
+    },
+    {
+      "name": "nl-bq-analysis",
+      "source": "./plugins/nl-bq-analysis",
+      "description": "BigQuery analysis skill with dry-run cost estimation, common query patterns, and Crescendo Lab GCP project routing",
+      "license": "MIT",
+      "keywords": ["bigquery", "bq", "analysis", "gcp", "data", "query", "dry-run"]
     }
   ]
 }
