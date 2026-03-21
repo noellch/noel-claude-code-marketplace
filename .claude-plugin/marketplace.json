@@ -66,7 +66,7 @@
     {
       "name": "nl-bq-analysis",
       "source": "./plugins/nl-bq-analysis",
-      "description": "BigQuery analysis skill with dry-run cost estimation, common query patterns, and Crescendo Lab GCP project routing",
+      "description": "BigQuery analysis skill with mandatory dry-run cost estimation, reusable query patterns, and cost-aware execution for any GCP project",
       "license": "MIT",
       "keywords": ["bigquery", "bq", "analysis", "gcp", "data", "query", "dry-run"]
     }

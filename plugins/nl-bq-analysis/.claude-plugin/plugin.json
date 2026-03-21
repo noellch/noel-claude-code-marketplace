@@ -1,7 +1,7 @@
 {
   "name": "nl-bq-analysis",
   "version": "1.0.0",
-  "description": "BigQuery analysis skill with dry-run cost estimation, common query patterns, and Crescendo Lab GCP project routing",
+  "description": "BigQuery analysis skill with mandatory dry-run cost estimation, reusable query patterns, and cost-aware execution for any GCP project",
   "author": {
     "name": "noellch",
     "url": "https://github.com/noellch"
