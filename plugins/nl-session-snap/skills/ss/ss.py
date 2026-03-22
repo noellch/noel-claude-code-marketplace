@@ -78,9 +78,10 @@ def format_table(sessions, max_count=None):
         print("  (no sessions found)")
         return
 
-    print(f" {'#':>3}  {'Age':<8} {'Project':<14} {'Branch':<22} {'Summary'}")
-    print(f" {'---':>3}  {'--------':<8} {'-'*14:<14} {'-'*22:<22} {'-'*40}")
+    print(f" {'#':>3}  {'Session ID':<10} {'Age':<8} {'Project':<14} {'Branch':<22} {'Summary'}")
+    print(f" {'---':>3}  {'-'*10:<10} {'--------':<8} {'-'*14:<14} {'-'*22:<22} {'-'*40}")
     for i, s in enumerate(sessions, 1):
+        sid = s.get("sessionId", "")[:8]
         proj = project_name(s.get("projectPath", ""))
         branch = s.get("gitBranch", "") or ""
         summary = s.get("summary", "") or "(no summary)"
@@ -89,7 +90,11 @@ def format_table(sessions, max_count=None):
             branch = branch[:20] + "…"
         if len(summary) > 50:
             summary = summary[:49] + "…"
-        print(f" {i:>3}  {age:<8} {proj:<14} {branch:<22} {summary}")
+        print(f" {i:>3}  {sid:<10} {age:<8} {proj:<14} {branch:<22} {summary}")
+
+
+def print_resume_tip():
+    print("\nResume: claude --resume <session-id-or-keyword>")
 
 
 def cmd_list(args):
@@ -98,6 +103,7 @@ def cmd_list(args):
     sessions.sort(key=lambda e: parse_dt(e.get("modified", "")), reverse=True)
     print(f"Recent sessions ({len(sessions)} total, showing {min(count, len(sessions))})\n")
     format_table(sessions, max_count=count)
+    print_resume_tip()
 
 
 def cmd_find(args):
@@ -176,6 +182,8 @@ def cmd_find(args):
 
     print(f"Search: {query} — {len(sessions)} found\n")
     format_table(sessions, max_count=30)
+    if sessions:
+        print_resume_tip()
 
 
 def cmd_context():

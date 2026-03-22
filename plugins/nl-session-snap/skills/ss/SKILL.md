@@ -47,7 +47,11 @@ Examples:
 [dbt-models] add cdh event dedup (feat/cdh-dedup)
 ```
 
-**Step 3.** Apply: `/rename <generated-name>`
+**Step 3.** Apply the name using the built-in `/rename` slash command (NOT the Skill tool — `/rename` is a native Claude Code command):
+
+```
+/rename <generated-name>
+```
 
 **Step 4.** Confirm:
 
@@ -61,7 +65,7 @@ Session renamed: <name>
 python3 "<skill_base_dir>/ss.py" find <keyword> [--project NAME] [--since Nd]
 ```
 
-Display output directly. All flags are combinable.
+Copy the script output into your text response as a fenced code block so it is fully visible to the user (tool output may be collapsed by the UI). All flags are combinable.
 
 ## `/ss list` — Browse Recent
 
@@ -69,4 +73,4 @@ Display output directly. All flags are combinable.
 python3 "<skill_base_dir>/ss.py" list [count]
 ```
 
-Display output directly. Default count: 10.
+Copy the script output into your text response as a fenced code block. Default count: 10.
