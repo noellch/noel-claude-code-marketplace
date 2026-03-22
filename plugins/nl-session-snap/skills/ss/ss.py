@@ -5,6 +5,7 @@ Usage:
     ss.py find <keyword> [--project NAME] [--since Nd]
     ss.py list [COUNT]
     ss.py context
+    ss.py rebuild          (force rebuild cache)
     ss.py --help
 """
 
@@ -14,8 +15,11 @@ import os
 import sys
 import datetime
 
-SESSIONS_GLOB = os.path.expanduser("~/.claude/projects/*/sessions-index.json")
+PROJECTS_BASE = os.path.expanduser("~/.claude/projects")
+CACHE_PATH = os.path.expanduser("~/.claude/session-snap-cache.json")
 
+
+# ── Helpers ──────────────────────────────────────────────────────────────────
 
 def parse_dt(s):
     if not s:
@@ -51,23 +55,197 @@ def project_name(path):
     return os.path.basename(path.rstrip("/")).lower()
 
 
-def load_all_sessions():
-    """Load all sessions from every project's sessions-index.json."""
-    all_sessions = []
-    for fpath in glob.glob(SESSIONS_GLOB):
-        try:
-            with open(fpath) as f:
-                raw = json.load(f)
-            if isinstance(raw, dict) and "entries" in raw:
-                entries = raw["entries"]
-            elif isinstance(raw, list):
-                entries = raw
-            else:
-                entries = []
-            all_sessions.extend(entries)
-        except (json.JSONDecodeError, OSError):
+# ── Cache layer ──────────────────────────────────────────────────────────────
+
+def _load_cache():
+    """Load the session-snap cache. Returns {sessionId: entry}."""
+    try:
+        with open(CACHE_PATH) as f:
+            return json.load(f)
+    except (OSError, json.JSONDecodeError):
+        return {}
+
+
+def _save_cache(cache):
+    with open(CACHE_PATH, "w") as f:
+        json.dump(cache, f, ensure_ascii=False, separators=(",", ":"))
+
+
+def _extract_metadata(jsonl_path):
+    """Read a .jsonl file to extract session metadata, first user message, and summary."""
+    meta = {}
+    first_user_text = None
+    summary = None
+    got_meta = False
+
+    try:
+        with open(jsonl_path) as fh:
+            for i, line in enumerate(fh):
+                if i > 50:
+                    break
+                try:
+                    data = json.loads(line)
+                except json.JSONDecodeError:
+                    continue
+
+                # Extract basic metadata from first line that has sessionId
+                if not got_meta and data.get("sessionId"):
+                    meta["sessionId"] = data["sessionId"]
+                    meta["projectPath"] = data.get("cwd", "")
+                    meta["gitBranch"] = data.get("gitBranch", "")
+                    meta["created"] = data.get("timestamp", "")
+                    got_meta = True
+
+                # First user message (skip slash commands)
+                if (data.get("type") == "user" and first_user_text is None):
+                    msg = data.get("message", {})
+                    content = msg.get("content", "") if isinstance(msg, dict) else ""
+                    if isinstance(content, str) and not content.startswith("<"):
+                        first_user_text = content[:120]
+
+                # Summary entry (keep last one — it's the most up-to-date)
+                if data.get("type") == "summary":
+                    summary = data.get("summary", "")
+
+    except OSError:
+        return None
+
+    if not meta.get("sessionId"):
+        return None
+
+    meta["summary"] = summary or ""
+    meta["firstPrompt"] = first_user_text or ""
+    return meta
+
+
+def _scan_all_jsonl():
+    """Scan all project dirs and return {sessionId: (proj_dir, jsonl_path, mtime)}."""
+    result = {}
+    try:
+        proj_dirs = os.listdir(PROJECTS_BASE)
+    except OSError:
+        return result
+
+    for dirname in proj_dirs:
+        proj_dir = os.path.join(PROJECTS_BASE, dirname)
+        if not os.path.isdir(proj_dir):
             continue
-    return all_sessions
+        try:
+            files = os.listdir(proj_dir)
+        except OSError:
+            continue
+        for fname in files:
+            if not fname.endswith(".jsonl"):
+                continue
+            sid = fname[:-6]  # strip .jsonl
+            fpath = os.path.join(proj_dir, fname)
+            try:
+                mtime = os.path.getmtime(fpath)
+            except OSError:
+                continue
+            result[sid] = (proj_dir, fpath, mtime)
+
+    return result
+
+
+def _enrich_from_index(cache):
+    """Supplement cache entries with data from sessions-index.json (summaries)."""
+    for idx_path in glob.glob(os.path.join(PROJECTS_BASE, "*/sessions-index.json")):
+        try:
+            with open(idx_path) as f:
+                raw = json.load(f)
+            entries = raw.get("entries", raw) if isinstance(raw, dict) else raw
+            if not isinstance(entries, list):
+                continue
+            for e in entries:
+                sid = e.get("sessionId", "")
+                if sid and sid in cache:
+                    # Backfill summary if missing
+                    if not cache[sid].get("summary") and e.get("summary"):
+                        cache[sid]["summary"] = e["summary"]
+                    if not cache[sid].get("firstPrompt") and e.get("firstPrompt"):
+                        cache[sid]["firstPrompt"] = e["firstPrompt"]
+                    if not cache[sid].get("customTitle") and e.get("customTitle"):
+                        cache[sid]["customTitle"] = e["customTitle"]
+        except (OSError, json.JSONDecodeError):
+            continue
+
+
+def load_all_sessions(force_rebuild=False):
+    """Load all sessions using cache + incremental .jsonl scanning."""
+    cache = {} if force_rebuild else _load_cache()
+
+    # Scan filesystem for all .jsonl files (just stat, ~17ms)
+    on_disk = _scan_all_jsonl()
+
+    # Find sessions that need (re-)reading
+    needs_read = []
+    for sid, (proj_dir, fpath, mtime) in on_disk.items():
+        cached = cache.get(sid)
+        if cached and cached.get("_mtime", 0) >= mtime:
+            continue  # Already cached and up-to-date
+        needs_read.append((sid, fpath, mtime))
+
+    # Remove sessions no longer on disk
+    on_disk_ids = set(on_disk.keys())
+    stale = [sid for sid in cache if sid not in on_disk_ids]
+    for sid in stale:
+        del cache[sid]
+
+    # Read new/changed files
+    if needs_read:
+        for sid, fpath, mtime in needs_read:
+            meta = _extract_metadata(fpath)
+            if meta:
+                meta["_mtime"] = mtime
+                meta["modified"] = datetime.datetime.fromtimestamp(
+                    mtime, tz=datetime.timezone.utc
+                ).isoformat()
+                cache[sid] = meta
+
+        # Enrich from index files (backfill summaries)
+        _enrich_from_index(cache)
+        _save_cache(cache)
+
+    return list(cache.values())
+
+
+# ── Display ──────────────────────────────────────────────────────────────────
+
+def _clean_text(text):
+    """Strip system tags and truncate for display."""
+    if not text:
+        return ""
+    import re
+    # Remove XML-style tags and their content (system reminders, caveats, etc.)
+    text = re.sub(r"<[a-z_-]+>.*?</[a-z_-]+>", "", text, flags=re.DOTALL | re.IGNORECASE)
+    text = re.sub(r"<[^>]+>", "", text)
+    return text.strip()
+
+
+def _display_text(session):
+    """Pick the best display text for a session."""
+    raw = (
+        session.get("customTitle")
+        or session.get("summary")
+        or session.get("firstPrompt")
+        or "(no summary)"
+    )
+    cleaned = _clean_text(raw)
+    return cleaned if cleaned else "(no summary)"
+
+
+def _is_observer_session(session):
+    """Check if this is an automated observer session (claude-mem, etc.)."""
+    fp = session.get("firstPrompt", "").lower()
+    pp = session.get("projectPath", "").lower()
+    return (
+        "observer-session" in pp
+        or "claude-mem" in pp
+        or "memory agent" in fp
+        or "claude-mem" in fp
+        or fp.startswith("analyze this conversation")
+    )
 
 
 def format_table(sessions, max_count=None):
@@ -84,7 +262,9 @@ def format_table(sessions, max_count=None):
         sid = s.get("sessionId", "")[:8]
         proj = project_name(s.get("projectPath", ""))
         branch = s.get("gitBranch", "") or ""
-        summary = s.get("summary", "") or "(no summary)"
+        if branch == "HEAD":
+            branch = ""
+        summary = _display_text(s)
         age = time_ago(s.get("modified", ""))
         if len(branch) > 21:
             branch = branch[:20] + "…"
@@ -97,9 +277,12 @@ def print_resume_tip():
     print("\nResume: claude --resume <session-id-or-keyword>")
 
 
+# ── Commands ─────────────────────────────────────────────────────────────────
+
 def cmd_list(args):
     count = int(args[0]) if args else 10
     sessions = load_all_sessions()
+    sessions = [s for s in sessions if not _is_observer_session(s)]
     sessions.sort(key=lambda e: parse_dt(e.get("modified", "")), reverse=True)
     print(f"Recent sessions ({len(sessions)} total, showing {min(count, len(sessions))})\n")
     format_table(sessions, max_count=count)
@@ -130,6 +313,7 @@ def cmd_find(args):
     keyword = " ".join(positional).lower()
 
     sessions = load_all_sessions()
+    sessions = [s for s in sessions if not _is_observer_session(s)]
     now = datetime.datetime.now(datetime.timezone.utc)
 
     # Filter: since
@@ -150,6 +334,8 @@ def cmd_find(args):
         for s in sessions:
             blob = " ".join([
                 s.get("summary", ""),
+                s.get("firstPrompt", ""),
+                s.get("customTitle", ""),
                 s.get("gitBranch", ""),
                 s.get("projectPath", ""),
             ]).lower()
@@ -221,6 +407,16 @@ def cmd_context():
     print(json.dumps(data, indent=2, ensure_ascii=False))
 
 
+def cmd_rebuild():
+    """Force rebuild the cache from scratch."""
+    import time
+    t0 = time.time()
+    sessions = load_all_sessions(force_rebuild=True)
+    elapsed = time.time() - t0
+    print(f"Cache rebuilt: {len(sessions)} sessions indexed in {elapsed:.2f}s")
+    print(f"Cache: {CACHE_PATH}")
+
+
 def main():
     if len(sys.argv) < 2 or sys.argv[1] in ("-h", "--help"):
         print(__doc__)
@@ -235,6 +431,8 @@ def main():
         cmd_find(args)
     elif cmd == "context":
         cmd_context()
+    elif cmd == "rebuild":
+        cmd_rebuild()
     else:
         # Treat unknown command as keyword search
         cmd_find([cmd] + args)
