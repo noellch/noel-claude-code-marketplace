@@ -1,7 +1,7 @@
 {
   "name": "nl-session-snap",
   "version": "1.0.0",
-  "description": "Save, search, and resume Claude Code sessions across projects with enriched context",
+  "description": "Name and search Claude Code sessions across projects",
   "author": {
     "name": "noellch",
     "url": "https://github.com/noellch"

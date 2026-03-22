@@ -66,7 +66,7 @@
     {
       "name": "nl-session-snap",
       "source": "./plugins/nl-session-snap",
-      "description": "Save, search, and resume Claude Code sessions across projects with enriched context",
+      "description": "Name and search Claude Code sessions across projects",
       "license": "MIT",
       "keywords": ["session", "resume", "save", "search", "context", "workflow"]
     },
