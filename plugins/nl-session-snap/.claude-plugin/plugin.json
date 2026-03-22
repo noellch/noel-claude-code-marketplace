@@ -1,0 +1,14 @@
+{
+  "name": "nl-session-snap",
+  "version": "1.0.0",
+  "description": "Save, search, and resume Claude Code sessions across projects with enriched context",
+  "author": {
+    "name": "noellch",
+    "url": "https://github.com/noellch"
+  },
+  "homepage": "https://github.com/noellch/noel-claude-code-marketplace",
+  "repository": "https://github.com/noellch/noel-claude-code-marketplace",
+  "license": "MIT",
+  "keywords": ["session", "resume", "save", "search", "context", "workflow"],
+  "skills": "./skills/"
+}

@@ -15,6 +15,20 @@
       "keywords": ["asana", "ticket", "task", "bug", "crescendo-lab"]
     },
     {
+      "name": "nl-bq-analysis",
+      "source": "./plugins/nl-bq-analysis",
+      "description": "BigQuery analysis skill with mandatory dry-run cost estimation, reusable query patterns, and cost-aware execution for any GCP project",
+      "license": "MIT",
+      "keywords": ["bigquery", "bq", "analysis", "gcp", "data", "query", "dry-run"]
+    },
+    {
+      "name": "nl-code-review",
+      "source": "./plugins/nl-code-review",
+      "description": "General-purpose code review skill that auto-detects tech stack and applies repo-aware review with optional adversarial pass",
+      "license": "MIT",
+      "keywords": ["code-review", "pr", "review", "adversarial", "quality", "general-purpose"]
+    },
+    {
       "name": "nl-handle-issue",
       "source": "./plugins/nl-handle-issue",
       "description": "Single entry point for issue resolution: classifies scope, orchestrates investigation with mandatory root-cause report, and chains sub-skills from debugging to PR creation",
@@ -50,25 +64,18 @@
       "keywords": ["resource", "digest", "summary", "analysis", "url", "article", "insights"]
     },
     {
+      "name": "nl-session-snap",
+      "source": "./plugins/nl-session-snap",
+      "description": "Save, search, and resume Claude Code sessions across projects with enriched context",
+      "license": "MIT",
+      "keywords": ["session", "resume", "save", "search", "context", "workflow"]
+    },
+    {
       "name": "nl-terminal-diagrams",
       "source": "./plugins/nl-terminal-diagrams",
       "description": "Render precise, perfectly-aligned diagrams in the terminal using graph-easy. Covers flowcharts, architecture diagrams, and relationship graphs with Unicode boxart output",
       "license": "MIT",
       "keywords": ["diagram", "flowchart", "graph", "terminal", "ascii", "boxart", "graph-easy", "architecture"]
-    },
-    {
-      "name": "nl-code-review",
-      "source": "./plugins/nl-code-review",
-      "description": "General-purpose code review skill that auto-detects tech stack and applies repo-aware review with optional adversarial pass",
-      "license": "MIT",
-      "keywords": ["code-review", "pr", "review", "adversarial", "quality", "general-purpose"]
-    },
-    {
-      "name": "nl-bq-analysis",
-      "source": "./plugins/nl-bq-analysis",
-      "description": "BigQuery analysis skill with mandatory dry-run cost estimation, reusable query patterns, and cost-aware execution for any GCP project",
-      "license": "MIT",
-      "keywords": ["bigquery", "bq", "analysis", "gcp", "data", "query", "dry-run"]
     }
   ]
 }
