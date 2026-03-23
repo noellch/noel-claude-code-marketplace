@@ -582,7 +582,13 @@ def cmd_clean(args):
 
 
 def cmd_rename(args):
-    """Rename a session by writing customTitle to sessions-index.json."""
+    """Rename a session by appending a custom-title entry to .jsonl.
+
+    This mirrors what Claude Code's native /rename does:
+    - Appends {"type":"custom-title","customTitle":"...","sessionId":"..."} to .jsonl
+    - Updates sessions-index.json for immediate visibility
+    - Updates ss cache
+    """
     session_id = None
     name_parts = []
     i = 0
@@ -601,7 +607,7 @@ def cmd_rename(args):
 
     # Auto-detect current session if no --id
     if not session_id:
-        session_id, proj_dir = _find_current_session_id()
+        session_id, _ = _find_current_session_id()
         if not session_id:
             print("Error: Could not detect current session. Use --id <session-id>.")
             sys.exit(1)
@@ -609,57 +615,53 @@ def cmd_rename(args):
     # Resolve prefix to full ID
     full_id = _resolve_session_id(session_id) or session_id
 
-    # Find the right sessions-index.json
-    idx_path, proj_dir = _find_index_path_for_session(full_id)
-    if not idx_path:
+    # Find session on disk
+    on_disk = _scan_all_jsonl()
+    if full_id not in on_disk:
         print(f"Error: Session {session_id} not found on disk.")
         sys.exit(1)
 
-    # Read or create index
-    try:
-        with open(idx_path) as f:
-            index_data = json.load(f)
-    except (OSError, json.JSONDecodeError):
-        index_data = {"version": 1, "entries": []}
+    proj_dir, jsonl_path, _ = on_disk[full_id]
 
-    entries = index_data.get("entries", [])
+    # 1. Append custom-title entry to .jsonl (source of truth for Claude Code)
+    title_entry = json.dumps({
+        "type": "custom-title",
+        "customTitle": name,
+        "sessionId": full_id,
+    }, ensure_ascii=False)
+    with open(jsonl_path, "a") as f:
+        f.write(title_entry + "\n")
 
-    # Find existing entry or create new one
-    found = False
-    for entry in entries:
-        if entry.get("sessionId") == full_id:
-            entry["customTitle"] = name
-            found = True
-            break
-
-    if not found:
-        jsonl_path = os.path.join(proj_dir, f"{full_id}.jsonl")
+    # 2. Update sessions-index.json for immediate visibility
+    idx_path = os.path.join(proj_dir, "sessions-index.json")
+    if os.path.isfile(idx_path):
         try:
-            mtime = os.path.getmtime(jsonl_path)
-        except OSError:
-            mtime = 0
-        new_entry = {
-            "sessionId": full_id,
-            "fullPath": jsonl_path,
-            "fileMtime": int(mtime * 1000),
-            "customTitle": name,
-            "created": datetime.datetime.fromtimestamp(
-                mtime, tz=datetime.timezone.utc
-            ).isoformat() if mtime else "",
-            "modified": datetime.datetime.fromtimestamp(
-                mtime, tz=datetime.timezone.utc
-            ).isoformat() if mtime else "",
-            "projectPath": os.getcwd(),
-            "isSidechain": False,
-        }
-        entries.append(new_entry)
+            with open(idx_path) as f:
+                index_data = json.load(f)
+        except (OSError, json.JSONDecodeError):
+            index_data = {"version": 1, "entries": []}
 
-    # Write back
-    index_data["entries"] = entries
-    with open(idx_path, "w") as f:
-        json.dump(index_data, f, ensure_ascii=False, indent=2)
+        found = False
+        for entry in index_data.get("entries", []):
+            if entry.get("sessionId") == full_id:
+                entry["customTitle"] = name
+                found = True
+                break
 
-    # Update cache too
+        if not found:
+            index_data.setdefault("entries", []).append({
+                "sessionId": full_id,
+                "fullPath": jsonl_path,
+                "customTitle": name,
+                "projectPath": os.getcwd(),
+                "isSidechain": False,
+            })
+
+        with open(idx_path, "w") as f:
+            json.dump(index_data, f, ensure_ascii=False, indent=2)
+            f.write("\n")
+
+    # 3. Update ss cache
     cache = _load_cache()
     if full_id in cache:
         cache[full_id]["customTitle"] = name

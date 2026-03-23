@@ -48,7 +48,7 @@ Examples:
 [dbt-models] add cdh event dedup (feat/cdh-dedup)
 ```
 
-**Step 3.** Apply the name directly via ss.py (writes customTitle to sessions-index.json):
+**Step 3.** Apply the name via ss.py (writes custom-title to .jsonl + sessions-index.json so it persists in `/resume`):
 
 ```bash
 python3 "<skill_base_dir>/ss.py" rename "<generated-name>"
@@ -56,11 +56,7 @@ python3 "<skill_base_dir>/ss.py" rename "<generated-name>"
 
 This auto-detects the current session. No user action required.
 
-**Step 4.** Confirm:
-
-```
-Session renamed: <name>
-```
+**Step 4.** Confirm with the script output (shows session ID and name).
 
 ## `/ss find` — Cross-Project Search
 
