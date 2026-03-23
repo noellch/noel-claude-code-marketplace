@@ -17,6 +17,7 @@ The helper script `ss.py` is in this skill's base directory. Use its full path w
 | `/ss` | [Rename](#ss--rename-current-session) current session |
 | `/ss find <keyword> [--project X] [--since Nd]` | [Search](#ss-find--cross-project-search) sessions |
 | `/ss list [count]` | [List](#ss-list--browse-recent) recent sessions |
+| `/ss copy <id-prefix>` | [Copy](#ss-copy--clipboard-resume) resume command to clipboard |
 | Otherwise | Show this command table |
 
 ## `/ss` — Rename Current Session
@@ -47,11 +48,13 @@ Examples:
 [dbt-models] add cdh event dedup (feat/cdh-dedup)
 ```
 
-**Step 3.** Apply the name using the built-in `/rename` slash command (NOT the Skill tool — `/rename` is a native Claude Code command):
+**Step 3.** Apply the name directly via ss.py (writes customTitle to sessions-index.json):
 
+```bash
+python3 "<skill_base_dir>/ss.py" rename "<generated-name>"
 ```
-/rename <generated-name>
-```
+
+This auto-detects the current session. No user action required.
 
 **Step 4.** Confirm:
 
@@ -74,3 +77,11 @@ python3 "<skill_base_dir>/ss.py" list [count]
 ```
 
 Copy the script output into your text response as a fenced code block. Default count: 10.
+
+## `/ss copy` — Clipboard Resume
+
+```bash
+python3 "<skill_base_dir>/ss.py" copy <session-id-prefix>
+```
+
+Copies `claude --resume <full-id>` to the system clipboard. User can then paste in a new terminal to resume.
