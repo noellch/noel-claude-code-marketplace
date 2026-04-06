@@ -19,6 +19,23 @@ Analyze public resources as a **critical analyst**, not a summarizer. The user w
 
 **Summarize → Opine → Advise.** Every resource analysis must contain all three layers. If you only summarize, you've done one-third of the job.
 
+## Dispatch Strategy
+
+**Check how many resources before starting:**
+
+```
+1 resource  → Analyze directly in this session
+2+ resources → Dispatch parallel subagents (one per resource), then synthesize
+```
+
+**For 2+ resources, use `superpowers:dispatching-parallel-agents`:**
+
+1. Dispatch one subagent per resource with the full per-resource analysis template below
+2. Each subagent returns: Metadata Card + Summary + Critical Analysis + Pros/Cons + Key Insights + Recommendations
+3. Collect all outputs, then produce the **Multi-Resource Synthesis** section yourself
+
+This cuts analysis time proportionally — 3 resources analyzed in parallel takes the same time as 1.
+
 ## Per-Resource Analysis Flow
 
 For EACH resource, produce these sections in order:

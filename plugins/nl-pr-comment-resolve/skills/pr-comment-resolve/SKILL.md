@@ -1,7 +1,6 @@
 ---
 name: pr-comment-resolve
 description: Use when the user asks to resolve, address, or fix PR review comments. Triggers on "resolve PR comments", "address review feedback", "fix PR issues"
-userInvocable: pr-comment-resolve
 ---
 
 # PR Comment Resolution
@@ -92,11 +91,33 @@ After user responds (e.g., "1,3,4"):
 
 ## Step 3: Evaluate (After User Confirms "Handle")
 
-**Before implementing, assess the suggestion:**
+**Use `superpowers:receiving-code-review` discipline for every Handle comment:**
+
+```
+READ    → Read the comment fully before reacting
+UNDERSTAND → Restate the requirement in your own words (or ask)
+VERIFY  → Check the suggestion against the actual codebase
+EVALUATE → Is it technically sound for THIS codebase?
+RESPOND → Technical acknowledgment, or reasoned pushback
+IMPLEMENT → Only after the above
+```
+
+**Forbidden responses — never say:**
+- "You're absolutely right!" / "Great point!" / "Excellent feedback!" (performative)
+- "Let me implement that now" (before verification)
+
+**If any comment is unclear: STOP. Do NOT implement anything until all unclear items are clarified.** Items may be related — partial understanding leads to wrong implementations.
+
+```
+❌ WRONG: Implement the clear comments now, ask about unclear ones later
+✅ RIGHT: "I understand comments 1,2,4. Need clarification on 3 and 5 before proceeding."
+```
+
+**Before implementing, assess each suggestion:**
 
 | Question | If No |
 |----------|-------|
-| Is it technically correct? | Reply explaining the issue |
+| Is it technically correct? | Reply explaining the issue, push back with reasoning |
 | Does it fit the codebase patterns? | Suggest alternative approach |
 | Is it a security/bug fix? | Prioritize highly |
 | Is it style preference? | Can discuss or accept |
