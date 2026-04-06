@@ -104,6 +104,21 @@ Render precise, perfectly-aligned diagrams in the terminal using `graph-easy`.
 - Supports both Graph::Easy native syntax and DOT format input
 - Requires: `brew install cpanminus && cpanm --local-lib=~/perl5 local::lib Graph::Easy`
 
+### nl-kb
+
+Personal knowledge base workflow inspired by Karpathy's AI note-taking system: collect raw resources and compile into structured wiki.
+
+```bash
+/plugin install nl-kb@noel
+```
+
+**Skills:**
+
+| Skill | Trigger | Description |
+|-------|---------|-------------|
+| `kb-collect` | "save to kb", "存到知識庫", `/kb-collect <url>` | Save URLs or session insights to `~/knowledge/raw/` |
+| `kb-compile` | "整理知識庫", `/kb-compile` | Compile raw materials into structured wiki in `~/knowledge/wiki/` |
+
 ## License
 
 MIT

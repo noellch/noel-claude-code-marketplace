@@ -1,0 +1,14 @@
+{
+  "name": "nl-kb",
+  "version": "1.0.0",
+  "description": "Personal knowledge base workflow: collect raw resources and compile into structured wiki",
+  "author": {
+    "name": "noellch",
+    "url": "https://github.com/noellch"
+  },
+  "homepage": "https://github.com/noellch/noel-claude-code-marketplace",
+  "repository": "https://github.com/noellch/noel-claude-code-marketplace",
+  "license": "MIT",
+  "keywords": ["knowledge-base", "kb", "wiki", "collect", "compile", "notes", "raw"],
+  "skills": "./skills/"
+}

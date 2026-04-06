@@ -97,6 +97,13 @@
       "description": "Structured learning companion for articles, PDFs, and transcripts — with quick/deep modes, concept maps, self-test questions, and next steps",
       "license": "MIT",
       "keywords": ["learn", "study", "article", "pdf", "notes", "education"]
+    },
+    {
+      "name": "nl-kb",
+      "source": "./plugins/nl-kb",
+      "description": "Personal knowledge base workflow: collect raw resources and compile into structured wiki",
+      "license": "MIT",
+      "keywords": ["knowledge-base", "kb", "wiki", "collect", "compile", "notes", "raw"]
     }
   ]
 }
