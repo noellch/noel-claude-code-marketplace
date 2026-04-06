@@ -1,0 +1,14 @@
+{
+  "name": "nl-create-pr",
+  "version": "1.0.0",
+  "description": "Create pull requests with FoD scope check, develop-first branching, conventional commits, and structured PR body",
+  "author": {
+    "name": "noellch",
+    "url": "https://github.com/noellch"
+  },
+  "homepage": "https://github.com/noellch/noel-claude-code-marketplace",
+  "repository": "https://github.com/noellch/noel-claude-code-marketplace",
+  "license": "MIT",
+  "keywords": ["pr", "pull-request", "git", "fod", "branch", "commit"],
+  "skills": "./skills/"
+}

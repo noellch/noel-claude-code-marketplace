@@ -1,0 +1,14 @@
+{
+  "name": "nl-stack-pr",
+  "version": "1.0.0",
+  "description": "Manage stacked pull request chains: visualize, add, update, and collapse PRs as upstream branches merge",
+  "author": {
+    "name": "noellch",
+    "url": "https://github.com/noellch"
+  },
+  "homepage": "https://github.com/noellch/noel-claude-code-marketplace",
+  "repository": "https://github.com/noellch/noel-claude-code-marketplace",
+  "license": "MIT",
+  "keywords": ["pr", "stacked-pr", "git", "rebase", "branch"],
+  "skills": "./skills/"
+}
