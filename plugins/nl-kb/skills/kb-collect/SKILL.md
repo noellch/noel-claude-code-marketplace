@@ -7,7 +7,7 @@ description: Use when saving a resource (URL, article, session insight) to the p
 
 ## Overview
 
-Save resources to `~/knowledge/raw/` with zero friction. Two modes: URL fetch (auto-extract content) or session insight extraction.
+Save resources to `~/knowledge/raw/<category>/` with zero friction. Two modes: URL fetch (auto-extract content) or session insight extraction.
 
 ## When to Use
 
@@ -19,9 +19,31 @@ Save resources to `~/knowledge/raw/` with zero friction. Two modes: URL fetch (a
 ## Usage
 
 ```
-/kb-collect <url>              → Fetch URL, extract content, save to raw/
+/kb-collect <url>              → Fetch URL, classify, save to raw/<category>/
 /kb-collect <url> <notes>      → Fetch URL + append user notes
 /kb-collect                    → Extract key insights from current session
+```
+
+## Knowledge Base Structure
+
+```
+~/knowledge/
+├── raw/                  ← Readonly source material
+│   ├── articles/           Web articles, blog posts
+│   ├── books/              Book notes, highlights
+│   ├── papers/             Academic papers
+│   ├── repos/              GitHub repos worth studying
+│   ├── notes/              Quick thoughts, session insights
+│   └── projects/           Project-related materials
+├── wiki/                 ← LLM-compiled knowledge (kb-compile output)
+│   ├── summaries/          One summary per source
+│   ├── concepts/           Cross-source concept entries
+│   └── indexes/            All-Sources.md, All-Concepts.md
+├── brainstorming/        ← Exploration and QA
+│   ├── chat/               AI conversation logs
+│   └── health/             Knowledge base health reports
+└── artifacts/            ← Finished works
+    └── projects/           Articles, presentations, analyses
 ```
 
 ## Flow
@@ -34,12 +56,20 @@ Save resources to `~/knowledge/raw/` with zero friction. Two modes: URL fetch (a
    - **URL mode:** WebFetch the URL. Extract full content preserving key details, data points, code examples. Do NOT over-summarize — this is raw material for later compilation.
    - **Session mode:** Review current conversation. Identify key insights, findings, decisions, or discoveries worth preserving. Ask user to confirm what to save if unclear.
 
-3. **Generate filename**
+3. **Classify into category**
+   - `articles/` — web articles, blog posts, tutorials
+   - `books/` — book notes, highlights, chapter summaries
+   - `papers/` — academic papers, research
+   - `repos/` — GitHub repositories worth studying
+   - `notes/` — quick thoughts, session insights, personal observations
+   - `projects/` — project-related materials, specs, design docs
+   - Default: `articles/` for URLs, `repos/` for GitHub URLs, `notes/` for session insights
+
+4. **Generate filename**
    - Format: `YYYY-MM-DD-<descriptive-slug>.md`
    - Slug: lowercase kebab-case, descriptive enough to recognize at a glance
-   - Examples: `2026-04-06-karpathy-knowledge-base-workflow.md`
 
-4. **Write file** to `~/knowledge/raw/`:
+5. **Write file** to `~/knowledge/raw/<category>/`:
 
 ```markdown
 ---
@@ -57,14 +87,14 @@ tags: [auto-generated, relevant, tags]
 - <most important points as bullets>
 ```
 
-5. **Confirm** to user: filename, word count, tags
+6. **Confirm** to user: category, filename, word count, tags
 
 ## Rules
 
-- `raw/` is **flat** — no subdirectories, no categorization
 - **Preserve detail** — this is raw material, not a summary. Keep data points, examples, code
 - **Always include source** in frontmatter
 - **Tags** — 3-5 relevant topic tags for future compilation
+- **Raw is readonly** — once saved, raw files are never modified by compilation
 - If URL fetch fails (paywalled, blocked), report clearly and save whatever was accessible
 
 ## Common Mistakes
@@ -72,6 +102,6 @@ tags: [auto-generated, relevant, tags]
 | Mistake | Fix |
 |---------|-----|
 | Over-summarizing content | raw/ stores raw material — keep the details |
-| Creating subdirectories | raw/ stays flat, categorization is kb-compile's job |
 | Vague filename | Must be descriptive enough to recognize at a glance |
 | Missing source | Always include source in frontmatter |
+| Wrong category | Articles = web content, Notes = personal insights, Papers = academic |

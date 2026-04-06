@@ -7,73 +7,108 @@ description: Use when compiling raw knowledge base materials into structured wik
 
 ## Overview
 
-Compile `~/knowledge/raw/` into a structured, searchable wiki in `~/knowledge/wiki/`. Reads all raw materials and produces organized, cross-referenced knowledge.
+Compile `~/knowledge/raw/` into structured knowledge in `~/knowledge/wiki/`. Generates per-source summaries, extracts cross-source concepts, and builds indexes.
 
 ## When to Use
 
-- `raw/` has accumulated 10+ files and needs organization
+- `raw/` has accumulated new uncompiled files
 - User says "整理知識庫", "compile", "build wiki"
 - User says `/kb-compile`
+
+## Knowledge Base Structure
+
+```
+~/knowledge/
+├── raw/                  ← Readonly source material (input)
+│   ├── articles/
+│   ├── books/
+│   ├── papers/
+│   ├── notes/
+│   └── projects/
+├── wiki/                 ← LLM-compiled knowledge (output)
+│   ├── summaries/          One summary per source
+│   ├── concepts/           Cross-source concept entries
+│   └── indexes/            All-Sources.md, All-Concepts.md
+├── brainstorming/        ← Exploration records
+│   ├── chat/
+│   └── health/
+└── artifacts/            ← Finished works
+```
 
 ## Flow
 
 1. **Inventory raw/**
-   - Read all files in `~/knowledge/raw/`
-   - List files with dates, tags, brief descriptions
-   - Show user the inventory and estimated scope
+   - Scan all subdirectories for files
+   - Compare against existing `wiki/summaries/` to find uncompiled sources
+   - Show user: new files count, total files, last compile date
 
-2. **Detect topics**
-   - Analyze tags and content to identify natural topic clusters
-   - Propose wiki structure to user for confirmation:
-     ```
-     wiki/
-     ├── index.md                    ← Master index
-     ├── bigquery-optimization.md    ← Topic page
-     ├── django-patterns.md          ← Topic page
-     └── ...
-     ```
-
-3. **Compile each topic page:**
+2. **Generate summaries** (`wiki/summaries/`)
+   - One summary per raw source file
+   - Filename mirrors source: `wiki/summaries/<source-filename>.md`
+   - Each summary includes:
 
 ```markdown
-# <Topic Name>
+# <Title>
 
-## Core Concepts
-<Concept> — <2-3 sentence explanation>
+**Source:** [filename](../../raw/<category>/<filename>)
+**Origin:** external | self
+**Compiled:** YYYY-MM-DD
 
-## Concept Relationships
-<How concepts connect to each other>
+## Core Conclusions
+<Main arguments and findings>
 
-## Practical Decision Guide
-<When to choose X vs Y — decision tables, rules of thumb>
+## Key Evidence
+<Data points, examples, quotes>
 
-## Key Evidence & Data Points
-<Specific numbers, benchmarks, examples from raw materials>
+## Open Questions
+<Doubts, gaps, things to verify>
 
-## Sources
-- [filename](../raw/filename.md) — what it contributed
-
-## Knowledge Gaps
-<What's missing, what to collect next>
+## Terms
+<Domain-specific terminology defined>
 ```
 
-4. **Generate index.md** — master page linking all topics
+3. **Extract concepts** (`wiki/concepts/`)
+   - A concept gets its own entry when it appears in **2+ summaries**
+   - Each concept entry includes:
 
-5. **Report** — topics generated, cross-references found, gaps identified
+```markdown
+# <Concept Name>
+
+## Definition
+<What this concept means>
+
+## External Perspectives
+<What sources say — with links to summaries>
+
+## My Practice
+<Personal experience and observations, if any>
+
+## Tensions & Gaps
+<Contradictions between sources, or between theory and practice>
+
+## Related Concepts
+<Links to other concept entries>
+```
+
+4. **Update indexes** (`wiki/indexes/`)
+   - `All-Sources.md` — table of all sources with category, date, summary link
+   - `All-Concepts.md` — alphabetical list of concepts with brief description and source count
+
+5. **Report** — new summaries created, new/updated concepts, contradictions found
 
 ## Rules
 
-- **Preserve provenance** — every claim traces back to a raw/ source
-- **Flag contradictions** — if raw materials disagree, make it explicit
-- **Suggest gaps** — note what's missing for completeness
-- **Incremental updates** — if wiki/ already has content, merge new info into existing pages
-- **Never delete raw/** — raw/ is source of truth, wiki/ is derived
+- **Raw is readonly** — never modify files in `raw/`
+- **Incremental** — only compile new/changed sources, don't redo existing summaries
+- **Preserve provenance** — every claim traces back to a raw source
+- **Flag contradictions** — when sources disagree, surface it in concept Tensions & Gaps
+- **Separate external vs self** — distinguish external sources from user's own notes/artifacts
 
 ## Common Mistakes
 
 | Mistake | Fix |
 |---------|-----|
-| Overwriting existing wiki pages | Merge new content into existing pages |
-| Losing source attribution | Every section references which raw/ files informed it |
-| Too many small pages | Group related concepts into one topic page |
-| Ignoring contradictions | Flag disagreements — they're valuable signals |
+| Modifying raw/ files | Raw is readonly — all output goes to wiki/ |
+| Recompiling everything | Only process new/changed files |
+| Missing concept links | Concepts must reference which summaries mention them |
+| Ignoring contradictions | Tensions are the most valuable part — always surface them |
