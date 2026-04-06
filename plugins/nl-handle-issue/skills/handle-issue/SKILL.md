@@ -56,6 +56,7 @@ If uncertain, ask the user.
 ```
 1. Investigate    → Use: analyze-issue (if Asana ticket)
                      or systematic-debugging (if error/traceback)
+                     If classified as bug: apply 5 Whys (see below)
                      Output: root cause + affected files list
 2. Plan           → Write a short plan (3-7 steps) in the conversation
                      List files to change and what each change does
@@ -80,6 +81,30 @@ If uncertain, ask the user.
 5. Verify         → Run all relevant tests and checks
 6. Deliver        → Use: commit-push-pr (when asked)
 ```
+
+## 5 Whys — Bug Root Cause Depth Check (Flows A & B)
+
+When the issue is classified as a **bug**, after identifying a candidate root cause, validate its depth before declaring it final:
+
+Ask "Why did [X] happen?" up to 5 times. Stop early when you reach:
+- A system/service boundary (external API, OS, network)
+- A deliberate policy or business decision
+- An external constraint outside your codebase
+
+**If the 5th Why points to a different file or module than your initial diagnosis → re-scope the fix.** The original candidate was a symptom, not the cause.
+
+Example:
+```
+Bug: "Checkout returns 500"
+Why 1: payment service threw an exception
+Why 2: exchange rate was None
+Why 3: FX API returned empty response
+Why 4: API key had expired
+→ Root cause: key rotation was never automated (policy gap)
+Fix scope: add key expiry monitoring, not just catch the exception
+```
+
+Show the Why chain in the Investigation Report's "How I reached this conclusion" section.
 
 ## Investigation Report (All Flows)
 

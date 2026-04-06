@@ -57,7 +57,15 @@ digraph phases {
 
 ## Phase 1: RESEARCH
 
-Deep-read the relevant codebase. Produce `research.md` with this structure:
+Dispatch **3 parallel research subagents**, each focused on one area. Do not read the entire codebase sequentially — parallelize:
+
+| Agent | Focus | Output |
+|-------|-------|--------|
+| **Agent 1 — Architecture** | Entry points, module relationships, data flow, service boundaries | Architecture Overview section |
+| **Agent 2 — Patterns** | Naming conventions, file structure, reusable components/hooks/utilities, state management patterns | Key Patterns section |
+| **Agent 3 — Constraints** | Technical risks, compatibility concerns, external APIs/packages, cross-repo or cross-team impacts | Constraints & Risks + Dependencies sections |
+
+After all 3 agents complete, **synthesize** their outputs into `research.md`:
 
 ```markdown
 # Research: [Feature Name]
