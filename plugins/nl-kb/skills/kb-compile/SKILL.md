@@ -7,7 +7,7 @@ description: Use when compiling raw knowledge base materials into structured wik
 
 ## Overview
 
-Compile `~/knowledge/raw/` into structured knowledge in `~/knowledge/wiki/`. Generates per-source summaries, extracts cross-source concepts, and builds indexes.
+Compile `~/knowledge/raw/` into structured knowledge in `~/knowledge/wiki/`. Generates per-source summaries, extracts cross-source concepts, and builds indexes. Incremental by default — only processes new files.
 
 ## When to Use
 
@@ -15,37 +15,27 @@ Compile `~/knowledge/raw/` into structured knowledge in `~/knowledge/wiki/`. Gen
 - User says "整理知識庫", "compile", "build wiki"
 - User says `/kb-compile`
 
-## Knowledge Base Structure
-
-```
-~/knowledge/
-├── raw/                  ← Readonly source material (input)
-│   ├── articles/
-│   ├── books/
-│   ├── papers/
-│   ├── notes/
-│   └── projects/
-├── wiki/                 ← LLM-compiled knowledge (output)
-│   ├── summaries/          One summary per source
-│   ├── concepts/           Cross-source concept entries
-│   └── indexes/            All-Sources.md, All-Concepts.md
-├── brainstorming/        ← Exploration records
-│   ├── chat/
-│   └── health/
-└── artifacts/            ← Finished works
-```
-
 ## Flow
 
-1. **Inventory raw/**
-   - Scan all subdirectories for files
-   - Compare against existing `wiki/summaries/` to find uncompiled sources
-   - Show user: new files count, total files, last compile date
+### Step 1: Inventory
 
-2. **Generate summaries** (`wiki/summaries/`)
-   - One summary per raw source file
-   - Filename mirrors source: `wiki/summaries/<source-filename>.md`
-   - Each summary includes:
+Scan `raw/` subdirectories for `.md` files. Compare against `wiki/summaries/` to find uncompiled sources. Matching is by **exact filename** — `raw/articles/2026-04-06-foo.md` maps to `wiki/summaries/2026-04-06-foo.md`.
+
+Show user:
+- New files count
+- Total files in raw/
+- List of new files to compile
+
+### Step 2: Generate summaries (`wiki/summaries/`)
+
+One summary per raw source. **Filename must match the source exactly** — do NOT add prefixes like `article--` or `note--`.
+
+```
+raw/articles/2026-04-06-karpathy-ai-knowledge-base-workflow.md
+→ wiki/summaries/2026-04-06-karpathy-ai-knowledge-base-workflow.md
+```
+
+Each summary uses this **exact** structure:
 
 ```markdown
 # <Title>
@@ -55,60 +45,109 @@ Compile `~/knowledge/raw/` into structured knowledge in `~/knowledge/wiki/`. Gen
 **Compiled:** YYYY-MM-DD
 
 ## Core Conclusions
-<Main arguments and findings>
+<Main arguments and findings — 3-5 bullets>
 
 ## Key Evidence
-<Data points, examples, quotes>
+<Data points, examples, quotes that support the conclusions>
 
 ## Open Questions
-<Doubts, gaps, things to verify>
+<Doubts, gaps, things to verify, contradictions with other sources>
 
 ## Terms
-<Domain-specific terminology defined>
+<Domain-specific terminology introduced or used — term: definition>
 ```
 
-3. **Extract concepts** (`wiki/concepts/`)
-   - A concept gets its own entry when it appears in **2+ summaries**
-   - Each concept entry includes:
+**Origin rules:**
+- `external` — articles, books, papers, repos (someone else's work)
+- `self` — notes, projects, artifacts (user's own insights)
+
+**Do NOT add fields or sections beyond what is shown above.** No `TL;DR`, no `Actionable Takeaways`, no `Relations`. Those are compile's internal concerns, not the output format.
+
+### Step 3: Extract concepts (`wiki/concepts/`)
+
+A concept gets its own entry **only when it appears in 2 or more summaries**. This threshold is strict.
+
+**Single-source findings do NOT get concept entries.** They live in their summary until a second source mentions them.
+
+Each concept uses this **exact** structure:
 
 ```markdown
 # <Concept Name>
 
 ## Definition
-<What this concept means>
+<What this concept means — 2-3 sentences>
 
 ## External Perspectives
-<What sources say — with links to summaries>
+<What sources say, with links to summaries>
+- [source-title](../summaries/filename.md) — what it says about this concept
 
 ## My Practice
-<Personal experience and observations, if any>
+<User's personal experience and observations, drawn from self-origin summaries. Leave blank if none.>
 
 ## Tensions & Gaps
-<Contradictions between sources, or between theory and practice>
+<Contradictions between sources, or between external views and personal practice. This is the most valuable section — never skip it.>
 
 ## Related Concepts
 <Links to other concept entries>
+- [concept-name](concept-name.md)
 ```
 
-4. **Update indexes** (`wiki/indexes/`)
-   - `All-Sources.md` — table of all sources with category, date, summary link
-   - `All-Concepts.md` — alphabetical list of concepts with brief description and source count
+### Step 4: Update indexes (`wiki/indexes/`)
 
-5. **Report** — new summaries created, new/updated concepts, contradictions found
+**Exactly 2 index files. No more.**
+
+**`All-Sources.md`:**
+
+```markdown
+# All Sources
+
+| Date | Title | Category | Summary |
+|------|-------|----------|---------|
+| 2026-04-06 | Karpathy AI Knowledge Base | articles | [link](../summaries/2026-04-06-karpathy-ai-knowledge-base-workflow.md) |
+| ... | ... | ... | ... |
+```
+
+**`All-Concepts.md`:**
+
+```markdown
+# All Concepts
+
+| Concept | Sources | Link |
+|---------|---------|------|
+| Knowledge Management | 3 | [link](../concepts/knowledge-management.md) |
+| ... | ... | ... |
+```
+
+Do NOT create additional index files (no `chronological.md`, no `by-source-type.md`, no `by-concept.md`). Two indexes only.
+
+### Step 5: Report
+
+Tell the user:
+- Summaries created (count + list)
+- Concepts created or updated (count + list)
+- Contradictions found
+- Knowledge gaps identified
 
 ## Rules
 
-- **Raw is readonly** — never modify files in `raw/`
-- **Incremental** — only compile new/changed sources, don't redo existing summaries
-- **Preserve provenance** — every claim traces back to a raw source
-- **Flag contradictions** — when sources disagree, surface it in concept Tensions & Gaps
-- **Separate external vs self** — distinguish external sources from user's own notes/artifacts
+- **Raw is readonly** — NEVER modify files in `raw/`. Not even to add frontmatter. If you feel the urge to "improve" a raw file, stop. That is a violation.
+- **Incremental** — only compile new/changed sources. Do not regenerate existing summaries unless the user explicitly says "recompile".
+- **Summary filename = raw filename** — no prefixes, no transformations. The mapping must be mechanical.
+- **Concept threshold: 2+ sources** — single-source ideas stay in their summary. Do not create concept entries for ideas mentioned in only one source, even if the idea seems "important enough."
+- **Exactly 2 index files** — `All-Sources.md` and `All-Concepts.md`. No additional indexes.
+- **Preserve provenance** — every claim in wiki must trace to a specific raw source.
+- **Flag contradictions** — when sources disagree, surface it in concept Tensions & Gaps. This is the most valuable part of compilation.
+- **Separate external vs self** — use the Origin field to distinguish.
 
 ## Common Mistakes
 
 | Mistake | Fix |
 |---------|-----|
-| Modifying raw/ files | Raw is readonly — all output goes to wiki/ |
-| Recompiling everything | Only process new/changed files |
-| Missing concept links | Concepts must reference which summaries mention them |
-| Ignoring contradictions | Tensions are the most valuable part — always surface them |
+| Adding prefix to summary filename (`article--foo.md`) | Summary filename = raw filename exactly |
+| Creating concept for single-source idea | Concept threshold is 2+ sources. No exceptions. |
+| Creating extra index files | Only `All-Sources.md` and `All-Concepts.md` |
+| Modifying raw/ files | Raw is readonly. Never touch it. |
+| Adding extra sections to summaries | Use the exact 4 sections: Core Conclusions, Key Evidence, Open Questions, Terms |
+| Recompiling already-compiled sources | Only process new files unless user says "recompile" |
+| Proposing to add frontmatter to raw/ | That violates readonly. Do not even suggest it. |
+| Creating `maturity` or `status` fields | Not in the schema. Do not invent fields. |
