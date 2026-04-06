@@ -1,0 +1,14 @@
+{
+  "name": "nl-lecture-walkthrough",
+  "version": "1.0.0",
+  "description": "Guided page-by-page teaching from PDF slide decks with project-contextualized insights and study notes generation",
+  "author": {
+    "name": "noellch",
+    "url": "https://github.com/noellch"
+  },
+  "homepage": "https://github.com/noellch/noel-claude-code-marketplace",
+  "repository": "https://github.com/noellch/noel-claude-code-marketplace",
+  "license": "MIT",
+  "keywords": ["lecture", "walkthrough", "pdf", "slides", "teaching", "study", "notes"],
+  "skills": "./skills/"
+}
