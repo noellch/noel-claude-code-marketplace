@@ -90,6 +90,13 @@
       "description": "Manage stacked pull request chains: visualize, add, update, and collapse PRs as upstream branches merge using rebase --onto",
       "license": "MIT",
       "keywords": ["pr", "stacked-pr", "git", "rebase", "branch"]
+    },
+    {
+      "name": "nl-learn",
+      "source": "./plugins/nl-learn",
+      "description": "Structured learning companion for articles, PDFs, and transcripts — with quick/deep modes, concept maps, self-test questions, and next steps",
+      "license": "MIT",
+      "keywords": ["learn", "study", "article", "pdf", "notes", "education"]
     }
   ]
 }
