@@ -76,6 +76,20 @@
       "description": "Render precise, perfectly-aligned diagrams in the terminal using graph-easy. Covers flowcharts, architecture diagrams, and relationship graphs with Unicode boxart output",
       "license": "MIT",
       "keywords": ["diagram", "flowchart", "graph", "terminal", "ascii", "boxart", "graph-easy", "architecture"]
+    },
+    {
+      "name": "nl-create-pr",
+      "source": "./plugins/nl-create-pr",
+      "description": "Create pull requests with FoD scope check gate, develop-first branching, conventional commits, and structured PR body template",
+      "license": "MIT",
+      "keywords": ["pr", "pull-request", "git", "fod", "branch", "commit"]
+    },
+    {
+      "name": "nl-stack-pr",
+      "source": "./plugins/nl-stack-pr",
+      "description": "Manage stacked pull request chains: visualize, add, update, and collapse PRs as upstream branches merge using rebase --onto",
+      "license": "MIT",
+      "keywords": ["pr", "stacked-pr", "git", "rebase", "branch"]
     }
   ]
 }
