@@ -1,0 +1,14 @@
+{
+  "name": "nl-playlist-curation",
+  "version": "1.0.0",
+  "description": "Curate Spotify playlists with O(?) complexity notation naming and point-of-view track selection (15-20 tracks per playlist)",
+  "author": {
+    "name": "noellch",
+    "url": "https://github.com/noellch"
+  },
+  "homepage": "https://github.com/noellch/noel-claude-code-marketplace",
+  "repository": "https://github.com/noellch/noel-claude-code-marketplace",
+  "license": "MIT",
+  "keywords": ["spotify", "playlist", "music", "curation", "recommendations", "naming"],
+  "skills": "./skills/"
+}
