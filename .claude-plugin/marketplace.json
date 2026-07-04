@@ -111,6 +111,13 @@
       "description": "Curate Spotify playlists with O(?) complexity notation naming and point-of-view track selection (15-20 tracks per playlist)",
       "license": "MIT",
       "keywords": ["spotify", "playlist", "music", "curation", "recommendations", "naming"]
+    },
+    {
+      "name": "nl-writing-skills",
+      "source": "./plugins/nl-writing-skills",
+      "description": "Write and edit Claude Code skills with a TDD-driven process (baseline-test, write, refactor) fused with a design vocabulary (predictability, leading words, information hierarchy) for building predictable skills",
+      "license": "MIT",
+      "keywords": ["skill", "writing-skills", "meta", "tdd", "predictability", "leading-word", "information-hierarchy", "cso"]
     }
   ]
 }

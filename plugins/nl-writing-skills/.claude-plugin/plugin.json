@@ -1,0 +1,14 @@
+{
+  "name": "nl-writing-skills",
+  "version": "1.0.0",
+  "description": "Write and edit Claude Code skills with a TDD-driven process (baseline-test, write, refactor) fused with a design vocabulary (predictability, leading words, information hierarchy) for building predictable skills",
+  "author": {
+    "name": "noellch",
+    "url": "https://github.com/noellch"
+  },
+  "homepage": "https://github.com/noellch/noel-claude-code-marketplace",
+  "repository": "https://github.com/noellch/noel-claude-code-marketplace",
+  "license": "MIT",
+  "keywords": ["skill", "writing-skills", "meta", "tdd", "predictability", "leading-word", "information-hierarchy", "cso"],
+  "skills": "./skills/"
+}
