@@ -1,0 +1,14 @@
+{
+  "name": "nl-grill",
+  "version": "1.0.0",
+  "description": "Relentless one-at-a-time interrogation that turns a rough idea into an approved, written spec — a grilling engine fused with a brainstorming pipeline, with an explicit problem-vs-solution split",
+  "author": {
+    "name": "noellch",
+    "url": "https://github.com/noellch"
+  },
+  "homepage": "https://github.com/noellch/noel-claude-code-marketplace",
+  "repository": "https://github.com/noellch/noel-claude-code-marketplace",
+  "license": "MIT",
+  "keywords": ["grill", "grilling", "brainstorming", "spec", "design", "requirements", "interrogation", "planning"],
+  "skills": "./skills/"
+}
