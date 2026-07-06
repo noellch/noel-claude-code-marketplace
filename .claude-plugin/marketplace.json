@@ -132,6 +132,13 @@
       "description": "Compact the current session into a durable, structured, secret-redacted handoff doc a fresh agent can resume from cold — saved to the repo's plan tree with a concrete entry point",
       "license": "MIT",
       "keywords": ["handoff", "context", "resume", "session", "continuity", "compaction"]
+    },
+    {
+      "name": "nl-index",
+      "source": "./plugins/nl-index",
+      "description": "Router and map for the nl-* skill collection — which skill to reach for in a given situation, how they chain, and where the collisions and gaps are",
+      "license": "MIT",
+      "keywords": ["index", "router", "map", "skills", "navigation", "which-skill", "dispatcher"]
     }
   ]
 }

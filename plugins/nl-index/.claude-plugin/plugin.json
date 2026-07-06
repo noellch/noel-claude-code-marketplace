@@ -1,0 +1,14 @@
+{
+  "name": "nl-index",
+  "version": "1.0.0",
+  "description": "Router and map for the nl-* skill collection — which skill to reach for in a given situation, how they chain, and where the collisions and gaps are",
+  "author": {
+    "name": "noellch",
+    "url": "https://github.com/noellch"
+  },
+  "homepage": "https://github.com/noellch/noel-claude-code-marketplace",
+  "repository": "https://github.com/noellch/noel-claude-code-marketplace",
+  "license": "MIT",
+  "keywords": ["index", "router", "map", "skills", "navigation", "which-skill", "dispatcher"],
+  "skills": "./skills/"
+}
