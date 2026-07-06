@@ -23,6 +23,8 @@ Model-agnostic by design: a strong model improvises some of this; a weaker one, 
 
 Don't use for a single-file change or a plan that isn't approved yet.
 
+If the plan's tasks span more than one repo, also apply **Multi-repo execution** below.
+
 ## The process
 
 Per task:
@@ -99,6 +101,44 @@ Conversation memory does not survive compaction; controllers that lose their pla
 - When a task's review comes back clean, append one line: `Task N: complete (commits <base7>..<head7>, review clean)`.
 - After compaction, trust the ledger and `git log` over your own recollection. `git clean -fdx` destroys the ledger (git-ignored scratch); recover from `git log`.
 
+## Multi-repo execution
+
+When the plan's tasks span more than one repository (a set of services, cross-repo
+feature work), the single-branch assumptions above break. Apply these on top of the
+per-task loop:
+
+- **Detect early.** Tasks naming files in different repos, or a plan that states a
+  cross-repo dependency graph = multi-repo mode. Say so in the pre-flight.
+- **Per-repo branch + BASE.** Each task commits in *its own repo's* feature branch.
+  Record `BASE` per repo, from that repo's HEAD, before the first task that touches
+  it — never one shared working tree, never a single `git merge-base main HEAD`
+  across all of them.
+- **One ledger at the orchestration root**, keyed by repo AND task:
+  `Task N (rubato): complete (commits …, review clean)`. You need one place that
+  survives to resume from when work is spread across repos.
+- **Order by contract-freeze, not git.** A cross-repo chain (producer endpoint →
+  consumer) is NOT a git stack — git cannot stack across repos. Order tasks so a
+  producer's contract (enum values, endpoint request/response shape) is frozen
+  before its consumer starts; note whether the consumer needs it *merged* or just
+  *agreed*. The dependency is the contract, not a branch.
+- **Make the cross-repo contract an artifact — the highest-risk gap.** A shared
+  contract (an enum used in 3 repos, an endpoint shape one produces and another
+  consumes) is exactly what a per-task reviewer flags "cannot verify from diff" — it
+  lives in another repo. Give it a mechanism: when the producer task defines it,
+  write the contract to a **contract file** in the ledger dir; forward that file to
+  every consumer task's dispatch AND its reviewer's global-constraints, so both
+  sides review against the *same* written contract. For a value contract (an enum),
+  add a test in each repo asserting its literal values — drift trips a test, not
+  production.
+- **Final review is per repo, plus one cross-repo pass.** Run `nl-code-review` once
+  per touched repo (each against its own merge-base). Then one extra pass whose only
+  job is: do the shared contracts match across repos (identical enum values,
+  agreeing endpoint shapes)?
+- **Soft / data dependencies are DONE-with-note, not BLOCKED.** A consumer that can
+  ship against a mock or an existing endpoint while the producer's real data isn't
+  live yet is DONE — record "real data pending Task M live" in the report; do not
+  mark it BLOCKED.
+
 ## Subagents use TDD
 
 The implementer prompt requires red-green-refactor: write a failing test, make it pass, refactor. Tests-first is non-negotiable in execution. (Inlined here so this skill carries no external TDD dependency.)
@@ -114,6 +154,8 @@ The implementer prompt requires red-green-refactor: write a failing test, make i
 - Tell a reviewer what not to flag, or pre-rate severity
 - Dispatch a reviewer without a diff file
 - Re-dispatch a task the ledger already marks complete (check after any compaction)
+- Treating a side-effect step with no diff (publishing i18n to a sheet, manual cross-browser QA) as covered by the review loop — it isn't; record it in the report and carry it to `nl-verify`
+- Assuming one repo when the plan spans several (see Multi-repo execution)
 
 ## Integration
 
