@@ -119,6 +119,19 @@ Personal knowledge base workflow inspired by Karpathy's AI note-taking system: c
 | `kb-collect` | "save to kb", "存到知識庫", `/kb-collect <url>` | Save URLs or session insights to `~/knowledge/raw/` |
 | `kb-compile` | "整理知識庫", `/kb-compile` | Compile raw materials into structured wiki in `~/knowledge/wiki/` |
 
+### nl-verify
+
+Verification gate plus clean branch finishing — evidence before any completion claim, then structured completion options.
+
+```bash
+/plugin install nl-verify@noel
+```
+
+- Iron Law: no completion claim without fresh verification evidence (gate function + claim/evidence table)
+- Red-green regression discipline; spirit-over-letter on success wording
+- Finish menu: deliver (via nl-create-pr) / merge locally / keep / discard (typed confirm), with worktree provenance cleanup
+- Plan-aware: verifies against `plan.md` acceptance criteria as the verify stage of nl-research-plan-execute
+
 ## License
 
 MIT

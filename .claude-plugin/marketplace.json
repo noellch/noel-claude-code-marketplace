@@ -153,6 +153,13 @@
       "description": "Slice an agreed feature plan into independently-shippable vertical-slice (tracer-bullet) tickets and publish them to the tracker in dependency order — not horizontal layer tickets",
       "license": "MIT",
       "keywords": ["plan", "tickets", "issues", "vertical-slice", "tracer-bullet", "decompose", "asana", "fod"]
+    },
+    {
+      "name": "nl-verify",
+      "source": "./plugins/nl-verify",
+      "description": "Verification gate (fresh evidence before any completion claim) plus clean branch finishing — deliver, merge, keep, or discard; the verify stage of research-plan-execute",
+      "license": "MIT",
+      "keywords": ["verify", "verification", "completion", "evidence", "finishing-branch", "merge", "discard", "regression", "tdd"]
     }
   ]
 }

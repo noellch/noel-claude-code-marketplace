@@ -1,0 +1,14 @@
+{
+  "name": "nl-verify",
+  "version": "1.0.0",
+  "description": "Verification gate (evidence before completion claims) plus clean branch finishing — deliver, merge, keep, or discard",
+  "author": {
+    "name": "noellch",
+    "url": "https://github.com/noellch"
+  },
+  "homepage": "https://github.com/noellch/noel-claude-code-marketplace",
+  "repository": "https://github.com/noellch/noel-claude-code-marketplace",
+  "license": "MIT",
+  "keywords": ["verify", "verification", "completion", "evidence", "finishing-branch", "merge", "discard", "tdd", "regression"],
+  "skills": "./skills/"
+}
