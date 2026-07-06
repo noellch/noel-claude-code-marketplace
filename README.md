@@ -132,6 +132,19 @@ Verification gate plus clean branch finishing — evidence before any completion
 - Finish menu: deliver (via nl-create-pr) / merge locally / keep / discard (typed confirm), with worktree provenance cleanup
 - Plan-aware: verifies against `plan.md` acceptance criteria as the verify stage of nl-research-plan-execute
 
+### nl-execute
+
+Execute an approved plan via subagents — the execute stage of nl-research-plan-execute.
+
+```bash
+/plugin install nl-execute@noel
+```
+
+- Fresh implementer subagent per task; per-task review with two verdicts (spec compliance + code quality); broad final review
+- File handoffs (brief / report / diff as files, never pasted context) + durable progress ledger that survives compaction
+- Explicit model selection per dispatch; implementer status protocol (DONE / DONE_WITH_CONCERNS / NEEDS_CONTEXT / BLOCKED); no pre-judging reviewer findings
+- Superpowers-free (pure git, no bundled scripts); hands the final review to nl-code-review and finishing to nl-verify
+
 ## License
 
 MIT

@@ -160,6 +160,13 @@
       "description": "Verification gate (fresh evidence before any completion claim) plus clean branch finishing — deliver, merge, keep, or discard; the verify stage of research-plan-execute",
       "license": "MIT",
       "keywords": ["verify", "verification", "completion", "evidence", "finishing-branch", "merge", "discard", "regression", "tdd"]
+    },
+    {
+      "name": "nl-execute",
+      "source": "./plugins/nl-execute",
+      "description": "Execute an approved plan via a fresh implementer subagent per task, per-task spec+quality review, and a broad final review — the execute stage of research-plan-execute",
+      "license": "MIT",
+      "keywords": ["execute", "subagent", "implementer", "task-review", "ledger", "file-handoff", "plan-execution", "tdd"]
     }
   ]
 }
