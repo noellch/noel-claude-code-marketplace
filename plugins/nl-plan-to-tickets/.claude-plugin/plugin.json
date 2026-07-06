@@ -1,0 +1,14 @@
+{
+  "name": "nl-plan-to-tickets",
+  "version": "1.0.0",
+  "description": "Slice an agreed feature plan into independently-shippable vertical-slice (tracer-bullet) tickets and publish them to the tracker in dependency order — not horizontal layer tickets",
+  "author": {
+    "name": "noellch",
+    "url": "https://github.com/noellch"
+  },
+  "homepage": "https://github.com/noellch/noel-claude-code-marketplace",
+  "repository": "https://github.com/noellch/noel-claude-code-marketplace",
+  "license": "MIT",
+  "keywords": ["plan", "tickets", "issues", "vertical-slice", "tracer-bullet", "decompose", "asana", "fod"],
+  "skills": "./skills/"
+}

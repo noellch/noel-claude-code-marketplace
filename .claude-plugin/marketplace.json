@@ -139,6 +139,20 @@
       "description": "Router and map for the nl-* skill collection — which skill to reach for in a given situation, how they chain, and where the collisions and gaps are",
       "license": "MIT",
       "keywords": ["index", "router", "map", "skills", "navigation", "which-skill", "dispatcher"]
+    },
+    {
+      "name": "nl-debug",
+      "source": "./plugins/nl-debug",
+      "description": "Loop-first discipline for hard bugs — build a tight red-capable reproduction loop before hypothesising, minimise it into a regression test; extends superpowers systematic-debugging with Matt Pocock's diagnosing-bugs feedback-loop rigor",
+      "license": "MIT",
+      "keywords": ["debug", "debugging", "bug", "reproduction", "feedback-loop", "regression-test", "flaky", "performance", "root-cause"]
+    },
+    {
+      "name": "nl-plan-to-tickets",
+      "source": "./plugins/nl-plan-to-tickets",
+      "description": "Slice an agreed feature plan into independently-shippable vertical-slice (tracer-bullet) tickets and publish them to the tracker in dependency order — not horizontal layer tickets",
+      "license": "MIT",
+      "keywords": ["plan", "tickets", "issues", "vertical-slice", "tracer-bullet", "decompose", "asana", "fod"]
     }
   ]
 }

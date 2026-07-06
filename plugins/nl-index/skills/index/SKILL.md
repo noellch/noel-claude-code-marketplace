@@ -17,6 +17,7 @@ idea → spec → domain → plan → build → deliver → review
 - `/nl-grill` — rough idea → approved written spec (relentless one-at-a-time questioning)
 - `nl-domain-modeling` — capture the terms + hard-to-reverse decisions as glossary/ADR (runs *alongside* grill)
 - `nl-research-plan-execute` — spec → researched, annotated plan → subagent execution (3+ task features)
+- `/nl-plan-to-tickets` — slice the plan into vertical-slice (tracer-bullet) tickets, in dependency order
 - `nl-create-pr` → `nl-stack-pr` — ship as FoD PRs; manage the stack as they merge
 - `nl-pr-comment-resolve` — address review feedback
 
@@ -32,8 +33,10 @@ idea → spec → domain → plan → build → deliver → review
 | studying **PDF slides** page-by-page | `nl-lecture-walkthrough` | learn / resource-digest |
 | saving / compiling knowledge for later | `nl-kb` | learn (one-off study) |
 | fixing a **tracked issue** end-to-end | `nl-handle-issue` | — |
+| debugging a **hard / intermittent** bug or perf regression | `nl-debug` | handle-issue (whole lifecycle; this is the debug engine) |
 | reviewing code / a PR | `nl-code-review` | repo-specific rubato/grazioso reviewers |
 | creating / stacking PRs | `nl-create-pr` / `nl-stack-pr` | — |
+| breaking an approved plan into tickets | `/nl-plan-to-tickets` | asana-ticket (formats ONE ticket; this decides the slices) |
 | checking docs vs code drift | `nl-living-docs` | — |
 | querying BigQuery | `nl-bq-analysis` | — |
 | drawing a diagram in the terminal | `nl-terminal-diagrams` | — |
@@ -49,7 +52,7 @@ idea → spec → domain → plan → build → deliver → review
 
 ## Known gaps (no skill yet)
 
-- **Debugging a bug outside the issue lifecycle** (a red test, weird prod behavior) — no *nl-* debug skill yet. Interim: `superpowers:systematic-debugging` (or `nl-handle-issue` if it's a tracked issue). *(Candidate: nl-debug — would fuse superpowers systematic-debugging + Matt diagnosing-bugs.)*
+- No open gaps in the core flow. Debugging → `nl-debug` (loop-first for hard bugs, extends `superpowers:systematic-debugging`); plan → tickets → `/nl-plan-to-tickets`. Add new gaps here as they surface.
 
 ## Invocation cheat-sheet
 

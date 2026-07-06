@@ -1,0 +1,14 @@
+{
+  "name": "nl-debug",
+  "version": "1.0.0",
+  "description": "Loop-first discipline for hard bugs — build a tight red-capable reproduction loop before hypothesising, minimise it into a regression test; extends superpowers systematic-debugging with Matt Pocock's diagnosing-bugs feedback-loop rigor",
+  "author": {
+    "name": "noellch",
+    "url": "https://github.com/noellch"
+  },
+  "homepage": "https://github.com/noellch/noel-claude-code-marketplace",
+  "repository": "https://github.com/noellch/noel-claude-code-marketplace",
+  "license": "MIT",
+  "keywords": ["debug", "debugging", "bug", "reproduction", "feedback-loop", "regression-test", "flaky", "performance", "root-cause"],
+  "skills": "./skills/"
+}
