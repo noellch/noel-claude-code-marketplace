@@ -48,8 +48,11 @@ re-slice before publishing.
   ticket is a layer, not a slice.
 - **Dependencies** — only the walking-skeleton or a genuine data/contract prereq.
   Do NOT chain siblings that can run in parallel.
-- **Per-repo PRs** — NOT a body section. They attach to the ticket via the Asana
-  GitHub widget (nl-asana-pr) as they open; the ticket stays one capability.
+- **Per-repo PRs** — NOT a body section. Represent each as a **subtask** under the
+  capability ticket, one per repo/PR, `[repo]`-prefixed (e.g. `[rubato] …`,
+  `[vivace] …`). This gives the parent a progress roll-up (3/4 done) and keeps
+  "service" at the subtask level where it's single-service. The PR link attaches to
+  its subtask via the Asana GitHub widget (nl-asana-pr) as it opens.
 
 ## Asana `html_notes` rendering (what nl-asana-ticket publishes)
 

@@ -1,6 +1,6 @@
 {
   "name": "nl-asana-ticket",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Asana ticket creation and issue investigation for Crescendo Lab",
   "author": {
     "name": "noellch",

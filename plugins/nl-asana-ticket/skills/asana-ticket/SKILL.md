@@ -39,9 +39,16 @@ Use exactly ONE prefix per title. Not `[Tech Debt]`, not `[Issue Ticket]-[...]`,
 
 ## Description Format
 
-Use `html_notes` (rich text) — plain `notes` collapses all formatting. Keep it short: Context + DoD only. Must be well-formed XML with a single `<body>` root; Asana allows only `<body> <h1> <h2> <ol> <ul> <li> <strong> <em> <u> <s> <code> <a> <blockquote> <pre>`.
+Always render the body as `html_notes` (rich text) — plain `notes` collapses all formatting. Must be well-formed XML with a single `<body>` root; Asana allows only `<body> <h1> <h2> <ol> <ul> <li> <strong> <em> <u> <s> <code> <a> <blockquote> <pre>`.
 
-### Standard Task
+**The body sections depend on who is calling this skill:**
+
+- **Caller-provided body** — when another skill hands you a body (e.g. `plan-to-tickets` provides a capability template: Goal / Scope / Acceptance / Dependencies), render THAT body as-is. Do NOT rewrite it into Context + DoD.
+- **Standalone ticket** — when you are creating a bug / debt / task directly (no caller body), use the default **Context + DoD** structure below.
+
+This skill owns the Asana **mechanics** — defaults, project routing, title prefix, custom fields, GIDs, `html_notes` rendering, and the create call — NOT one fixed body shape. Context + DoD is only the default for standalone tickets.
+
+### Standard Task (default standalone body)
 ```html
 <body><h2>Context</h2>
 <ul>
