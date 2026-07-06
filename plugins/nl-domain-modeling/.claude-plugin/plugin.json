@@ -1,0 +1,14 @@
+{
+  "name": "nl-domain-modeling",
+  "version": "1.0.0",
+  "description": "Build a durable ubiquitous-language glossary and record hard-to-reverse decisions as ADRs — captures the domain model in files as the single source of truth, not the chat transcript",
+  "author": {
+    "name": "noellch",
+    "url": "https://github.com/noellch"
+  },
+  "homepage": "https://github.com/noellch/noel-claude-code-marketplace",
+  "repository": "https://github.com/noellch/noel-claude-code-marketplace",
+  "license": "MIT",
+  "keywords": ["domain-modeling", "ubiquitous-language", "glossary", "adr", "ddd", "design", "single-source-of-truth"],
+  "skills": "./skills/"
+}

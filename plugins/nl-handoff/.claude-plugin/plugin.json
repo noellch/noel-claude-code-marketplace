@@ -1,0 +1,14 @@
+{
+  "name": "nl-handoff",
+  "version": "1.0.0",
+  "description": "Compact the current session into a durable, structured, secret-redacted handoff doc a fresh agent can resume from cold — saved to the repo's plan tree with a concrete entry point",
+  "author": {
+    "name": "noellch",
+    "url": "https://github.com/noellch"
+  },
+  "homepage": "https://github.com/noellch/noel-claude-code-marketplace",
+  "repository": "https://github.com/noellch/noel-claude-code-marketplace",
+  "license": "MIT",
+  "keywords": ["handoff", "context", "resume", "session", "continuity", "compaction"],
+  "skills": "./skills/"
+}
