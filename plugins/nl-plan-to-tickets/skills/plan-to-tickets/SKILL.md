@@ -1,7 +1,6 @@
 ---
 name: plan-to-tickets
-description: Slice an agreed feature plan into independently-shippable tickets and publish them to the tracker in dependency order. Type /nl-plan-to-tickets when you have a plan or spec and need to break it into work items.
-disable-model-invocation: true
+description: Slice an agreed feature plan or spec into independently-shippable, vertically-sliced (tracer-bullet) tickets and publish them to the tracker in dependency order. Use when an approved plan or spec needs breaking into work items — e.g. right after nl-research-plan-execute or nl-grill produces a plan, or when the user asks to slice a plan into tickets, break down a plan, create tickets/tasks from a plan, or make Asana tasks from a plan. Also invocable directly as /nl-plan-to-tickets.
 ---
 
 # Plan to Tickets
@@ -29,8 +28,12 @@ Slice by **user-visible capability**, not by architectural layer or repo. A slic
    *Done when:* every ticket ships something a user or PM could see demoed; none is a pure layer.
 3. **Order by TRUE dependency only** — most slices run in parallel once the skeleton exists. Don't invent a straight chain.
    *Done when:* the dependency graph is as flat as the real constraints allow.
-4. **Write each ticket** — goal (user-visible), scope (layers it touches), acceptance (how you'd demo it), dependencies. Use `nl-asana-ticket` to format and publish each.
-   *Done when:* each ticket is grabbable cold, is a small reviewable PR, and they're in the tracker in dependency order.
+4. **Write each ticket** using the [ticket template](references/ticket-template.md) — goal (user-visible), scope (layers/repos it touches), acceptance (how you'd demo it), dependencies, PRs-under-it. Fill the template's sections, then hand it to `nl-asana-ticket` to render as `html_notes` and publish.
+   *Done when:* each ticket is grabbable cold, is a small reviewable PR (or a short per-repo PR stack), and they're in the tracker in dependency order.
+
+## The ticket template
+
+Every ticket follows [`references/ticket-template.md`](references/ticket-template.md). The template exists to force the vertical framing: the **title is a capability** (a user action), **Goal** is user-visible, **Acceptance** is a concrete demo, and per-repo PRs live *under* the one capability ticket. If a filled template's title reads like a layer ("add the model"), the slice is wrong — re-slice before publishing.
 
 ## Red flags — STOP
 

@@ -1,7 +1,6 @@
 ---
 name: grill
-description: Relentless, one-question-at-a-time interrogation that turns a rough idea into an approved, written spec — pressure-tests intent, separates problem from solution, and refuses to build until shared understanding is reached. Type /nl-grill before building a feature.
-disable-model-invocation: true
+description: Relentless, one-question-at-a-time interrogation that turns a rough idea into an approved, written spec — pressure-tests intent, separates problem from solution, and refuses to build until shared understanding is reached. Use before building a non-trivial feature, when a rough idea needs pressure-testing into a spec; also invocable as /nl-grill.
 ---
 
 # Grill
