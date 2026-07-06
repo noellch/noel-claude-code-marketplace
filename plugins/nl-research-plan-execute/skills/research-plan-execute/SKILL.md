@@ -1,6 +1,6 @@
 ---
 name: research-plan-execute
-description: Use when starting medium-to-large feature development with 3+ independent implementation tasks, before writing any code. Triggers on feature requests requiring codebase understanding, multi-file changes, or cross-module work.
+description: Use when starting medium-to-large feature development with 3+ independent implementation tasks, before writing any code. Triggers on feature requests requiring codebase understanding, multi-file changes, or cross-module work. Orchestrates research → plan → tickets → execute → verify through the nl-* skills.
 ---
 
 # Research-Plan-Execute
@@ -28,7 +28,7 @@ digraph when {
 
 **Don't use for:** Single-file fixes, well-understood patterns, tasks < 3 independent units.
 
-## The Four Phases
+## The Five Phases
 
 ```dot
 digraph phases {
@@ -36,7 +36,8 @@ digraph phases {
 
     "RESEARCH" [shape=box style=filled fillcolor=lightyellow];
     "PLAN + ANNOTATE" [shape=box style=filled fillcolor=lightyellow];
-    "EXECUTE (SDD)" [shape=box style=filled fillcolor=lightyellow];
+    "TICKETS" [shape=box style=filled fillcolor=lightyellow];
+    "EXECUTE" [shape=box style=filled fillcolor=lightyellow];
     "VERIFY" [shape=box style=filled fillcolor=lightyellow];
 
     "Human reviews research.md" [shape=diamond];
@@ -48,9 +49,10 @@ digraph phases {
     "Human reviews research.md" -> "RESEARCH" [label="gaps found"];
     "PLAN + ANNOTATE" -> "Annotations remain?" [label="human adds annotations"];
     "Annotations remain?" -> "PLAN + ANNOTATE" [label="yes — update plan"];
-    "Annotations remain?" -> "EXECUTE (SDD)" [label="no — plan clean"];
-    "EXECUTE (SDD)" -> "All tasks pass dual review?";
-    "All tasks pass dual review?" -> "EXECUTE (SDD)" [label="no — fix"];
+    "Annotations remain?" -> "TICKETS" [label="no — plan clean"];
+    "TICKETS" -> "EXECUTE";
+    "EXECUTE" -> "All tasks pass dual review?";
+    "All tasks pass dual review?" -> "EXECUTE" [label="no — fix"];
     "All tasks pass dual review?" -> "VERIFY" [label="yes"];
 }
 ```
@@ -96,7 +98,7 @@ Research is NOT a quick scan. It is a structured document the human can verify.
 
 ## Phase 2: PLAN + ANNOTATE
 
-Produce `plan.md` with SDD-compatible task list. Then enter the **Annotation Cycle**.
+Produce `plan.md` with an execution-ready task list (one independently-implementable task per entry). Then enter the **Annotation Cycle**.
 
 ### Plan Format
 
@@ -136,24 +138,30 @@ Free-form notes are also accepted. The cycle:
 
 Ask the human: "Please review the plan and add annotations. Use `REJECT:`, `CORRECT:`, or `ADD:` markers, or write free-form notes."
 
-## Phase 3: EXECUTE
+## Phase 3: TICKETS
 
-**REQUIRED:** Use `superpowers:subagent-driven-development` for execution.
+After the plan reaches zero annotations and the human approves it, slice it into tickets.
+
+**REQUIRED:** Use `nl-plan-to-tickets`.
+
+It cuts the plan into independently-shippable vertical slices in dependency order, and confirms before publishing to the tracker (the tracker write is its own gate — this phase does not bypass it). Keep plan tasks and tickets 1:1, so execution reads `plan.md` while the tracker mirrors it.
+
+## Phase 4: EXECUTE
+
+**REQUIRED:** Use `nl-execute`.
 
 The controller:
 1. Reads `plan.md` + `research.md`
 2. Extracts all tasks into TodoWrite
-3. Per task: dispatches fresh implementer subagent with task text + relevant research context
+3. Per task: dispatches a fresh implementer subagent with the task brief + relevant research context
 4. Per task: spec compliance review, then code quality review
 5. Review loops until both pass
 
 **Controller provides research context to each subagent.** Extract only the sections of `research.md` relevant to that task — do not dump the entire file.
 
-## Phase 4: VERIFY
+## Phase 5: VERIFY
 
-**REQUIRED:** Use `superpowers:verification-before-completion` before claiming done.
-
-Then use `superpowers:finishing-a-development-branch` for merge/PR decisions.
+**REQUIRED:** Use `nl-verify` before claiming done — it gates completion on fresh verification evidence, then guides finishing (deliver via `nl-create-pr`, merge, keep, or discard).
 
 ## Rationalization Table
 
@@ -192,11 +200,13 @@ These thoughts mean STOP — you are about to violate the workflow:
 
 ## Integration
 
-**Required skills:**
-- `superpowers:subagent-driven-development` — Phase 3 execution engine
-- `superpowers:verification-before-completion` — Phase 4
+**Required skills (the pipeline stages):**
+- `nl-plan-to-tickets` — Phase 3: slice the approved plan into tickets
+- `nl-execute` — Phase 4: subagent-per-task execution engine
+- `nl-verify` — Phase 5: verification gate + branch finishing
 
 **Complementary skills:**
-- `superpowers:writing-plans` — Plan format reference
-- `superpowers:finishing-a-development-branch` — Post-verification completion
-- `superpowers:test-driven-development` — Subagents use TDD during execution
+- `nl-code-review` — broad final whole-branch review inside `nl-execute`
+- `nl-create-pr` — delivery path from `nl-verify`'s finish menu
+
+Plan format (Phase 2) and subagent TDD (Phase 4) are carried inline by this skill and `nl-execute` — no external dependency.
