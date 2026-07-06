@@ -28,12 +28,12 @@ Slice by **user-visible capability**, not by architectural layer or repo. A slic
    *Done when:* every ticket ships something a user or PM could see demoed; none is a pure layer.
 3. **Order by TRUE dependency only** — most slices run in parallel once the skeleton exists. Don't invent a straight chain.
    *Done when:* the dependency graph is as flat as the real constraints allow.
-4. **Write each ticket** using the [ticket template](references/ticket-template.md) — goal (user-visible), scope (layers/repos it touches), acceptance (how you'd demo it), dependencies, PRs-under-it. Fill the template's sections, then hand it to `nl-asana-ticket` to render as `html_notes` and publish.
+4. **Write each ticket** using the [ticket template](references/ticket-template.md) — goal (user-visible), scope (layers/repos it touches), acceptance (how you'd demo it), dependencies. Fill the template's sections, then hand it to `nl-asana-ticket` to render as `html_notes` and publish. Per-repo PRs are NOT written in the body — they attach to the ticket via the Asana GitHub widget (nl-asana-pr) as they open.
    *Done when:* each ticket is grabbable cold, is a small reviewable PR (or a short per-repo PR stack), and they're in the tracker in dependency order.
 
 ## The ticket template
 
-Every ticket follows [`references/ticket-template.md`](references/ticket-template.md). The template exists to force the vertical framing: the **title is a capability** (a user action), **Goal** is user-visible, **Acceptance** is a concrete demo, and per-repo PRs live *under* the one capability ticket. If a filled template's title reads like a layer ("add the model"), the slice is wrong — re-slice before publishing.
+Every ticket follows [`references/ticket-template.md`](references/ticket-template.md). The template exists to force the vertical framing: the **title is a capability** (a user action), **Goal** is user-visible, **Acceptance** is a concrete demo. Per-repo PRs are NOT a body section — they attach to the ticket via the Asana GitHub widget (nl-asana-pr) as they open, so the ticket stays one capability. If a filled template's title reads like a layer ("add the model"), the slice is wrong — re-slice before publishing.
 
 ## Red flags — STOP
 

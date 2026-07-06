@@ -2,8 +2,8 @@
 
 One filled template = one vertical-slice ticket. Fill the sections, then hand the
 whole thing to `nl-asana-ticket` — it renders the **Asana `html_notes`** (plain
-`notes` collapses all formatting) and publishes. Per-repo PRs live *under* this one
-capability ticket, not as separate tickets.
+`notes` collapses all formatting) and publishes. Per-repo PRs attach to the ticket
+later via the Asana GitHub widget (nl-asana-pr) — do NOT list them in the body.
 
 ## The rule the template enforces
 
@@ -36,8 +36,6 @@ re-slice before publishing.
 **Out of scope:** <what this slice deliberately defers, to keep it thin>
 
 **Dependencies:** <ticket ids that MUST land first — true deps only, else "none">
-
-**PRs under this ticket:** <repo → branch/PR, the FoD stack for this capability>
 ```
 
 ## Field rules
@@ -50,8 +48,8 @@ re-slice before publishing.
   ticket is a layer, not a slice.
 - **Dependencies** — only the walking-skeleton or a genuine data/contract prereq.
   Do NOT chain siblings that can run in parallel.
-- **PRs under this ticket** — this is where the per-repo split lives. The ticket
-  stays one capability; the stack (e.g. `rubato → dolce → vivace`) sits under it.
+- **Per-repo PRs** — NOT a body section. They attach to the ticket via the Asana
+  GitHub widget (nl-asana-pr) as they open; the ticket stays one capability.
 
 ## Asana `html_notes` rendering (what nl-asana-ticket publishes)
 
@@ -79,7 +77,5 @@ Asana rich text supports only: `<body> <h1> <h2> <ol> <ul> <li> <strong> <em> <u
 <ul><li>Configurable new-tab/same-tab target (fast-follow).</li></ul>
 <h2>Dependencies</h2>
 <ul><li>Walking-skeleton ticket (the new link_type + config).</li></ul>
-<h2>PRs under this ticket</h2>
-<ul><li><code>rubato</code> → hop endpoint · <code>dolce</code> → proxy · <code>vivace</code> → SDK render</li></ul>
 </body>
 ```

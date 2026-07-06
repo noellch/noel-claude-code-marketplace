@@ -39,47 +39,45 @@ Use exactly ONE prefix per title. Not `[Tech Debt]`, not `[Issue Ticket]-[...]`,
 
 ## Description Format
 
-Use `notes` (plain text), NOT `html_notes`. Keep it short — Context + DoD only.
+Use `html_notes` (rich text) — plain `notes` collapses all formatting. Keep it short: Context + DoD only. Must be well-formed XML with a single `<body>` root; Asana allows only `<body> <h1> <h2> <ol> <ul> <li> <strong> <em> <u> <s> <code> <a> <blockquote> <pre>`.
 
 ### Standard Task
-```
-Context:
-- Background: Why this task exists
-- Goal: What we want to achieve
-- Impact: Who benefits and how
-
-DoD:
-- Done criteria 1
-- Done criteria 2
+```html
+<body><h2>Context</h2>
+<ul>
+<li><strong>Background</strong>: why this task exists</li>
+<li><strong>Goal</strong>: what we want to achieve</li>
+<li><strong>Impact</strong>: who benefits and how</li>
+</ul>
+<h2>DoD</h2>
+<ul><li>Done criteria 1</li><li>Done criteria 2</li></ul></body>
 ```
 
 ### Bug Report
-```
-Context:
-- Background: Where/when the issue was found
-- Impact: How it affects users/business
-
-Steps:
-1. ...
-2. ...
-
-Expected: ...
-Actual: ...
-
-DoD:
-- Bug fixed
-- Tests pass
+```html
+<body><h2>Context</h2>
+<ul>
+<li><strong>Background</strong>: where/when the issue was found</li>
+<li><strong>Impact</strong>: how it affects users/business</li>
+</ul>
+<h2>Steps</h2>
+<ol><li>...</li><li>...</li></ol>
+<h2>Expected / Actual</h2>
+<ul><li><strong>Expected</strong>: ...</li><li><strong>Actual</strong>: ...</li></ul>
+<h2>DoD</h2>
+<ul><li>Bug fixed</li><li>Tests pass</li></ul></body>
 ```
 
 ### Technical Debt
-```
-Context:
-- Background: Current problem
-- Goal: What improvement we want
-- Impact: Why this matters
-
-DoD:
-- Improvement completed
+```html
+<body><h2>Context</h2>
+<ul>
+<li><strong>Background</strong>: current problem</li>
+<li><strong>Goal</strong>: what improvement we want</li>
+<li><strong>Impact</strong>: why this matters</li>
+</ul>
+<h2>DoD</h2>
+<ul><li>Improvement completed</li></ul></body>
 ```
 
 Do NOT add extra sections (Requirements, Scope, Technical Considerations, References, etc.). Context + DoD is enough.
@@ -117,7 +115,7 @@ All GID mappings are in `references/custom-fields.md`.
 | `[Tech Debt]` prefix | Use `[Debt]` |
 | `[Issue Ticket]-[...]` format | Use `[Bug]` |
 | `[FE][Debt]` double prefix | Use `[Debt]` only — one prefix per title |
-| Using html_notes | Use plain text `notes` |
+| Using plain text `notes` | Use `html_notes` (rich text) |
 | 6-section description | Context + DoD only |
 | QA bug missing Severity/Bug Status | Both are mandatory |
 | Mixing fields across projects | Each project has its own fields |
