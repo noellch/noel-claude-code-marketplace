@@ -1,6 +1,6 @@
 {
   "name": "nl-writing-skills",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Write and edit Claude Code skills with a TDD-driven process (baseline-test, write, refactor) fused with a design vocabulary (predictability, leading words, information hierarchy) for building predictable skills",
   "author": {
     "name": "noellch",
