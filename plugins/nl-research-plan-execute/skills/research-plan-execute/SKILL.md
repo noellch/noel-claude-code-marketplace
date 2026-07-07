@@ -98,20 +98,22 @@ Research is NOT a quick scan. It is a structured document the human can verify.
 
 ## Phase 2: PLAN + ANNOTATE
 
-Produce `plan.md` with an execution-ready task list (one independently-implementable task per entry). Then enter the **Annotation Cycle**.
+Produce `plan.md` with an execution-ready task list, then enter the **Annotation Cycle**.
+
+**Slice tasks vertically — slicing happens HERE, not in Phase 3.** Each task is a **vertical tracer-bullet**: one demoable, user-visible capability that spans every layer it needs (model + endpoint + UI), never a layer ("the model", "all the endpoints"). Task 1 is the **walking skeleton** — the thinnest end-to-end slice that proves the whole path — and shared plumbing (schema, a validator) rides with the first task that needs it rather than getting its own task. Authoring tasks vertical *here* is what makes the Phase-3 task↔ticket mapping 1:1 instead of a re-slice. See `nl-plan-to-tickets` for the full vertical-slicing model (don't restate it).
 
 ### Plan Format
 
-Each task must be independently implementable by a subagent:
+Each task must be an independently-shippable vertical slice a subagent can implement alone:
 
 ```markdown
 # Plan: [Feature Name]
 
-## Task 1: [Title]
-- **Files:** list of files to create/modify
+## Task 1: [Title — a user-visible capability, e.g. "Save a lead end-to-end"]
+- **Files:** files to create/modify (across whatever layers/repos the slice needs)
 - **Approach:** specific implementation strategy
 - **Depends on:** other task numbers, or "none"
-- **Acceptance criteria:** what "done" looks like
+- **Acceptance criteria:** a concrete demo — what a user or PM would see working
 
 ## Task 2: [Title]
 ...
@@ -140,11 +142,11 @@ Ask the human: "Please review the plan and add annotations. Use `REJECT:`, `CORR
 
 ## Phase 3: TICKETS
 
-After the plan reaches zero annotations and the human approves it, slice it into tickets.
+After the plan reaches zero annotations and the human approves it, publish it as tickets.
 
 **REQUIRED:** Use `nl-plan-to-tickets`.
 
-It cuts the plan into independently-shippable vertical slices in dependency order, and confirms before publishing to the tracker (the tracker write is its own gate — this phase does not bypass it). Keep plan tasks and tickets 1:1, so execution reads `plan.md` while the tracker mirrors it.
+Phase 2 already sliced the plan vertically, so this phase does NOT re-slice: `nl-plan-to-tickets` maps each plan task to one ticket, orders by dependency, and confirms before publishing to the tracker (the tracker write is its own gate — this phase does not bypass it). Plan tasks and tickets stay 1:1, so execution reads `plan.md` while the tracker mirrors it. If `nl-plan-to-tickets` finds a "task" that is actually a layer rather than a demoable slice, the Phase-2 plan is wrong — go back and re-slice it, don't paper over it at ticket time.
 
 ## Phase 4: EXECUTE
 
@@ -182,6 +184,7 @@ These thoughts mean STOP — you are about to violate the workflow:
 
 - Writing code before `research.md` is approved
 - Writing code before `plan.md` has zero annotations
+- A plan task named after a layer ("the model", "all the endpoints") instead of a demoable capability — slice it vertically (Phase 2)
 - Skipping annotation cycle because "plan looks good"
 - Implementing multiple tasks without per-task review gates
 - Using one long session instead of fresh subagents per task
@@ -194,6 +197,7 @@ These thoughts mean STOP — you are about to violate the workflow:
 |---------|------------------|
 | Dumping entire research.md to every subagent | Extract only relevant sections per task |
 | Free-form plan without acceptance criteria | Each task needs explicit "done" definition |
+| Plan tasks sliced by layer (DB task, API task, UI task) | Slice each task as a vertical capability; Phase 3 then keeps them 1:1 with tickets |
 | Annotation cycle with zero rounds | Minimum 1 round, even if plan seems perfect |
 | Skipping Phase 1 for "familiar" code | Familiarity breeds blind spots. Research anyway. |
 | Merging Plan + Research into one step | They are separate phases with separate human review gates |

@@ -1,6 +1,6 @@
 ---
 name: grill
-description: Relentless, one-question-at-a-time interrogation that turns a rough idea into an approved, written spec — pressure-tests intent, separates problem from solution, and refuses to build until shared understanding is reached. Use before building a non-trivial feature, when a rough idea needs pressure-testing into a spec; also invocable as /nl-grill.
+description: Use when a rough idea or vague feature request needs pressure-testing into an approved, written spec before any code — requirements are unclear, scope is fuzzy, or the word "simple" is hiding unexamined assumptions. Grills one question at a time, problem before solution, refusing to build until the design is approved. Also invocable as /nl-grill.
 ---
 
 # Grill

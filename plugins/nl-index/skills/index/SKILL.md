@@ -6,7 +6,7 @@ disable-model-invocation: true
 
 # nl-index — which skill, when
 
-A map from situation → skill. Several nl-* skills are **user-invoked** (grill, handoff, writing-skills, this one) — the agent can't see or auto-fire them, so this is how you remember they exist and pick the right one.
+A map from situation → skill. A few nl-* skills are **user-invoked** (handoff, writing-skills, this one) — the agent can't see or auto-fire them, so this is how you remember they exist and pick the right one.
 
 ## The feature flow (happy path, in order)
 
@@ -14,7 +14,7 @@ A map from situation → skill. Several nl-* skills are **user-invoked** (grill,
 idea → spec → domain → plan → build → deliver → review
 ```
 
-- `/nl-grill` — rough idea → approved written spec (relentless one-at-a-time questioning)
+- `nl-grill` — rough idea → approved written spec (relentless one-at-a-time questioning)
 - `nl-domain-modeling` — capture the terms + hard-to-reverse decisions as glossary/ADR (runs *alongside* grill)
 - `nl-research-plan-execute` — spec → researched, annotated plan → subagent execution (3+ task features)
 - `/nl-plan-to-tickets` — slice the plan into vertical-slice (tracer-bullet) tickets, in dependency order
@@ -25,7 +25,7 @@ idea → spec → domain → plan → build → deliver → review
 
 | When you're… | Reach for | Don't confuse with |
 |---|---|---|
-| unsure of requirements for a new feature | `/nl-grill` | RPE (comes *after* grill, not instead) |
+| unsure of requirements for a new feature | `nl-grill` | RPE (comes *after* grill, not instead) |
 | pinning down domain terms / hard decisions | `nl-domain-modeling` | grill (grill *elicits*, this *records*) |
 | planning a 3+ task feature | `nl-research-plan-execute` | grill (spec first, then this) |
 | learning an article to **retain** it | `nl-learn` | resource-digest (opinion) / lecture-walkthrough (slides) |
@@ -56,7 +56,7 @@ idea → spec → domain → plan → build → deliver → review
 
 ## Invocation cheat-sheet
 
-- **You must type these** (user-invoked, agent can't auto-fire): `/nl-index`, `/nl-grill`, `/nl-handoff`, `/nl-writing-skills`
-- **Auto-fire or reference** (model-invoked): everything else, including `nl-domain-modeling`
+- **You must type these** (user-invoked, agent can't auto-fire): `/nl-index`, `/nl-handoff`, `/nl-writing-skills`
+- **Auto-fire or reference** (model-invoked): everything else, including `nl-grill` and `nl-domain-modeling`
 
 *Keep this map in sync when you add, remove, or repurpose an nl-* skill.*

@@ -202,18 +202,6 @@ pytest auth/tests/ -v
 git push
 ```
 
-## Quick Reference
-
-| Action | Command |
-|--------|---------|
-| Get PR info | `gh pr view --json number,url` |
-| Get repo URL | `gh repo view --json url -q .url` |
-| List comments with IDs | `gh api repos/{owner}/{repo}/pulls/{pr}/comments` |
-| Reply to SPECIFIC comment | `gh api .../comments/{id}/replies -f body="..."` |
-| Get short SHA | `git rev-parse --short HEAD` |
-| Get full SHA | `git rev-parse HEAD` |
-| Commit link format | `[short](repo_url/commit/full_sha)` |
-
 ## Edge Cases
 
 | Situation | Action |
@@ -233,16 +221,3 @@ git push
 | Reply to general PR, not specific comment | Use `gh api .../comments/{id}/replies` for specific reply |
 | Only describe fixes, don't implement | Use Edit tool to make actual changes |
 | Blindly accept all suggestions | Evaluate each suggestion; push back if incorrect |
-
-## Commit Message Template (Per Comment)
-
-```bash
-git commit -m "fix(auth): add email validation before DB query
-
-Addresses review comment #12345 by @senior-dev"
-```
-
-**Key points:**
-- One commit per comment (not batch)
-- Include comment ID in commit message
-- Mention reviewer username
