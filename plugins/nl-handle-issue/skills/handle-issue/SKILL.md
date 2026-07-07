@@ -7,6 +7,8 @@ description: Use when assigned an issue, bug report, error message, or feature r
 
 Single entry point for issue resolution. Classifies scope, selects the right workflow, and ensures every step is completed.
 
+**Boundaries:** this skill's job is intake → classify → route → ensure completion. It does NOT re-teach debugging, planning, or PR mechanics — each flow delegates to the owning skill (`nl-debug`, `nl-research-plan-execute`, `nl-create-pr`).
+
 ## Phase 1: Intake
 
 Gather context from whatever the user provides:
@@ -42,7 +44,7 @@ If uncertain, ask the user.
 ## Flow A: Quick Fix (Small)
 
 ```
-1. Debug          → Use: systematic-debugging
+1. Debug          → Use: nl-debug (extends systematic-debugging)
                      Find root cause, not just symptoms
 2. Fix            → Edit code directly
 3. Verify         → Run relevant tests
@@ -55,7 +57,7 @@ If uncertain, ask the user.
 
 ```
 1. Investigate    → Use: analyze-issue (if Asana ticket)
-                     or systematic-debugging (if error/traceback)
+                     or nl-debug (if error/traceback; extends systematic-debugging)
                      If classified as bug: apply 5 Whys (see below)
                      Output: root cause + affected files list
 2. Plan           → Write a short plan (3-7 steps) in the conversation

@@ -49,6 +49,7 @@ idea → spec → domain → plan → build → deliver → review
 
 - **learn vs resource-digest vs lecture-walkthrough** — same input (content), different *intent*: **retain** / **critique** / **slide-teach**. Match on the verb, not the input.
 - **grill vs domain-modeling vs research-plan-execute** — a pipeline, not rivals: grill (elicit the spec) → domain-modeling (record terms + decisions) → RPE (plan + execute).
+- **handle-issue vs debug** — handle-issue is the lifecycle *orchestrator* (intake → classify scope → route → ensure completion); `nl-debug` is the *engine* it calls for the investigation step. Whole-lifecycle routing → handle-issue; already known to be a hard/intermittent bug → `nl-debug` directly. handle-issue delegates the debugging, it doesn't redo it.
 
 ## Known gaps (no skill yet)
 

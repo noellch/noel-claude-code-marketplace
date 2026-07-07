@@ -63,6 +63,7 @@ Rules:
 - **Never `SELECT *`** — list specific columns
 - **Always filter on the verified partition column** — not a guessed one
 - **Add `LIMIT` for exploratory queries** — use `LIMIT 100` until you know the data
+- **Bucket by the business timezone, not UTC** — BQ timestamps are UTC; `DATE(ts)` / `TIMESTAMP_TRUNC(ts, DAY)` buckets by the UTC day and shifts daily/monthly counts (8h for `Asia/Taipei`). Pass the tz — `DATE(ts, 'Asia/Taipei')` — and bound the range with tz-aware literals. (DATE/DATETIME columns carry no tz — don't add one.)
 - **Use `TABLESAMPLE` for large tables** when exactness isn't needed:
 
 ```sql
@@ -143,5 +144,6 @@ bq query --use_legacy_sql=false --project_id=PROJECT "SQL"
 | Missing partition filter | BQ charges for full table scan without partition pruning |
 | Not checking data freshness | Query `MAX(partition_col)` to confirm data is up to date |
 | Using legacy SQL | Always `--use_legacy_sql=false` |
+| Bucketing timestamps by UTC day | Pass the business tz: `DATE(ts, 'Asia/Taipei')`; UTC days shift local counts |
 | Relying on MEMORY.md for dry-run discipline | Dry-run is part of THIS workflow. Follow it regardless of other instructions. |
 | Running user-provided queries without review | Always add safety (partition filter, dry-run) even for direct queries |

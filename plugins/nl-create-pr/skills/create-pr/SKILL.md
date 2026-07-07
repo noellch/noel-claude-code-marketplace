@@ -40,6 +40,8 @@ Ask: does this changeset contain **exactly one primary task**?
 | Feature flag + code that uses it | Same PR is OK |
 | Import updates from a refactor | Same PR as the refactor |
 
+**Repo policy is the source of truth for the specific rules.** If the repo documents its own PR/splitting policy (e.g. a `CLAUDE.md` "PR Strategy" section), defer to it — the table above is the portable default for when the repo says nothing. The FoD judgment (one primary task per PR; if not, stop and split) holds regardless.
+
 **Red flag:** If you find yourself saying "I'll include the refactor since I was already in that file" — that's scope creep. Split it.
 
 ## Phase 2: Branch Setup
