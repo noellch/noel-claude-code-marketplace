@@ -167,6 +167,13 @@
       "description": "Execute an approved plan via a fresh implementer subagent per task, per-task spec+quality review, and a broad final review — the execute stage of research-plan-execute",
       "license": "MIT",
       "keywords": ["execute", "subagent", "implementer", "task-review", "ledger", "file-handoff", "plan-execution", "tdd"]
+    },
+    {
+      "name": "nl-release-watch",
+      "source": "./plugins/nl-release-watch",
+      "description": "Post-merge release triage — time-boxed checklist ending in an evidence-backed verdict; verifies the monitor's heartbeat before trusting zero errors and never signs off silently",
+      "license": "MIT",
+      "keywords": ["release", "post-merge", "deploy", "monitoring", "sentry", "smoke-test", "verdict", "heartbeat", "sign-off"]
     }
   ]
 }

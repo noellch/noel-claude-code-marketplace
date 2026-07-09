@@ -1,0 +1,14 @@
+{
+  "name": "nl-release-watch",
+  "version": "1.0.0",
+  "description": "Post-merge release triage — 15-minute time-boxed checklist ending in an evidence-backed verdict; verifies the monitor's heartbeat before trusting zero errors, exercises the change for real, and never signs off silently",
+  "author": {
+    "name": "noellch",
+    "url": "https://github.com/noellch"
+  },
+  "homepage": "https://github.com/noellch/noel-claude-code-marketplace",
+  "repository": "https://github.com/noellch/noel-claude-code-marketplace",
+  "license": "MIT",
+  "keywords": ["release", "post-merge", "deploy", "monitoring", "sentry", "smoke-test", "verdict", "heartbeat", "sign-off"],
+  "skills": "./skills/"
+}
