@@ -1,0 +1,14 @@
+{
+  "name": "nl-tw-stock-entry",
+  "version": "1.0.0",
+  "description": "Deterministic daily entry assessment for the Taiwan stock market: hard market gate, pinned screen criteria, watchlist-vs-buy-list discipline, and TWSE data-source gotchas",
+  "author": {
+    "name": "noellch",
+    "url": "https://github.com/noellch"
+  },
+  "homepage": "https://github.com/noellch/noel-claude-code-marketplace",
+  "repository": "https://github.com/noellch/noel-claude-code-marketplace",
+  "license": "MIT",
+  "keywords": ["taiwan", "stock", "twse", "screening", "technical-analysis", "finance"],
+  "skills": "./skills/"
+}
