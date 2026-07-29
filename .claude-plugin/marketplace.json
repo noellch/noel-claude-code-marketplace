@@ -181,6 +181,13 @@
       "description": "Deterministic daily entry assessment for the Taiwan stock market — hard market gate, pinned screen criteria, watchlist-vs-buy-list discipline, and TWSE data-source gotchas",
       "license": "MIT",
       "keywords": ["taiwan", "stock", "twse", "screening", "technical-analysis", "entry", "finance"]
+    },
+    {
+      "name": "nl-tw-stock-checkup",
+      "source": "./plugins/nl-tw-stock-checkup",
+      "description": "Single-stock health check and position decisions for TWSE stocks — four-panel checkup card, thesis-first hold/sell discipline, sunk-cost rule, buy verdicts gated by tw-stock-entry",
+      "license": "MIT",
+      "keywords": ["taiwan", "stock", "twse", "checkup", "position", "stop-loss", "take-profit", "fundamentals"]
     }
   ]
 }

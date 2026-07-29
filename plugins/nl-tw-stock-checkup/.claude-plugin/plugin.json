@@ -1,0 +1,14 @@
+{
+  "name": "nl-tw-stock-checkup",
+  "version": "1.0.0",
+  "description": "Single-stock health check and position decisions for TWSE stocks: fixed four-panel checkup card, thesis-first hold/sell discipline, sunk-cost rule, and gated buy verdicts that defer to the tw-stock-entry market gate",
+  "author": {
+    "name": "noellch",
+    "url": "https://github.com/noellch"
+  },
+  "homepage": "https://github.com/noellch/noel-claude-code-marketplace",
+  "repository": "https://github.com/noellch/noel-claude-code-marketplace",
+  "license": "MIT",
+  "keywords": ["taiwan", "stock", "twse", "checkup", "position", "stop-loss", "take-profit", "fundamentals"],
+  "skills": "./skills/"
+}
