@@ -26,11 +26,12 @@ When the gate fails, the output is exactly: verdict 觀望 + relative-strength w
 
 ## Execution Flow (MANDATORY order)
 
-1. **Market context** — today's TAIEX close, breadth (up/down/limit-down counts), turnover. The data date MUST equal today: OpenAPI bulk files lag one trading day; same-day data comes from the RWD endpoint (see references). If only stale data is available, state that explicitly in the output instead of presenting it as today's.
-2. **Screen** — run the pinned two-layer screen below on the full market. Do not tune thresholds or lookback windows per run.
-3. **Verdict** — apply the gate. Pass → entry candidates go to step 4. Fail → watchlist + stabilization checklist, skip to step 5. Either path: cross-check every published table against the 處置/注意 lists and exclude or flag matches.
-4. **Deep check (entry candidates only)** — per stock: 1y daily history, MA alignment (MA5>MA20>MA60), RSI/KD/MACD, volume expansion; flag imminent ex-dividend dates.
-5. **Report** — conclusion first; criteria and every data date stated; TW color convention (紅漲綠跌) in any visual output; ends with a non-advice disclaimer. Produce an HTML artifact only when the user asks — then invoke the dataviz skill before writing chart code.
+1. **Market context** — TAIEX close, breadth (up/down/limit-down counts), turnover. First determine the **signal day**: same-day close data publishes ~15:00 TW time via the RWD endpoint; before that, every source (RWD and OpenAPI bulk) carries the previous trading day. Signal day = the latest complete trading day whose data is actually available — print it, never present it as today's if it isn't. **Entry window = the trading day after signal day.** A run during trading hours (signal day ≠ today) makes step 4 mandatory.
+2. **Screen** — run the pinned two-layer screen below on the full market, on signal-day data. Do not tune thresholds or lookback windows per run.
+3. **Verdict** — apply the gate on signal-day data. Pass → continue to step 4/5. Fail → watchlist + stabilization checklist, skip to step 6. Either path: cross-check every published table against the 處置/注意 lists and exclude or flag matches.
+4. **Intraday confirmation (veto-only)** — only when signal day ≠ today and the gate passed; see the section below. May downgrade the verdict to 觀望 or drop candidates; never upgrades.
+5. **Deep check (entry candidates only)** — per stock: 1y daily history, MA alignment (MA5>MA20>MA60), RSI/KD/MACD, volume expansion; flag imminent ex-dividend dates.
+6. **Report** — conclusion first; criteria, signal day, entry window, and every data date stated; TW color convention (紅漲綠跌) in any visual output; ends with a non-advice disclaimer. Produce an HTML artifact only when the user asks — then invoke the dataviz skill before writing chart code.
 
 ## Pinned screen criteria
 
@@ -55,6 +56,15 @@ Watchlist fallback when Layer 2 also passes 0: green close + value > 0.5 億. An
 2. US semiconductors (SOX) stabilize overnight
 3. A reversal candle on expanded volume appears — then watch which watchlist names make short-term highs first
 
+## Intraday confirmation (veto-only)
+
+Closes the blind spot of a during-hours run: the gate was judged on yesterday's close while today's tape may already contradict it. Data: MIS snapshot API, ~5s delayed (see references).
+
+- **Direction is one-way.** Live data can only downgrade — veto a passing gate or drop a candidate. A gate that failed on signal-day data stays failed no matter how strong today's rebound looks; it needs a full trading day's data to pass.
+- **Index veto**: fetch live TAIEX (`tse_t00.tw`). Intraday change vs reference price ≤ −2% → verdict becomes 觀望, entry list dropped, watchlist rules apply.
+- **Candidate re-check** (gate still passing): fetch live quotes for every entry candidate. Drop names now below monthly average price. Flag names up more than +7.5% intraday as chase risk — flagged means not recommended for today's window.
+- **Print the confirmation timestamp** next to the verdict. If MIS is unreachable, no same-day entry list: label all candidates 適用於下一交易日 instead.
+
 ## Optional enrichment
 
 Institutional flows (三大法人 T86) for candidates or watchlist names — a strong secondary signal on crash days (who is absorbing the selling). Endpoint and its pitfalls are in the references file.
@@ -64,7 +74,8 @@ Institutional flows (三大法人 T86) for candidates or watchlist names — a s
 Done only when ALL hold:
 - Verdict is exactly one of 進場條件成立 / 觀望, backed by the pass-count as evidence
 - Every table of stock names carries its label: 進場候選 or 觀察名單（非買進訊號）
-- Every data source's date is printed and equals today, or its staleness is stated
+- Signal day and entry window are stated; every data source's date is printed
+- If run during trading hours with a passing gate: the intraday confirmation timestamp is printed, or its unavailability plus the next-day-only downgrade is stated
 - Output ends with a non-advice disclaimer (非投資建議)
 
 ## Rationalizations
@@ -76,6 +87,7 @@ Done only when ALL hold:
 | "Valuation file is one day old, close enough" | Usable — but print its data date in the output. |
 | "News quotes an analyst calling this a buying point" | Forecasts are context, not signals. The gate decides. |
 | "These are defensive names, different from chasing rebounds" | Defensive or not, a named list on a gate-fail day is still a buy list. |
+| "The market is bouncing hard today, yesterday's gate fail is stale" | Intraday data is veto-only: it can cancel an entry, never create one. |
 
 ## Data sources
 

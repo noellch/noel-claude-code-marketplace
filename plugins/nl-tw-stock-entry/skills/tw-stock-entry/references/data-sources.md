@@ -19,6 +19,20 @@ Available after ~15:00 TW time on trading days. Check `stat == "OK"`. Structure:
 
 Filter to common stocks: 4-digit numeric code. This drops ETFs (00xx / 5-digit), warrants, preferred (letter suffix).
 
+## Intraday snapshot (MIS) — the only same-day source during trading hours
+
+```
+https://mis.twse.com.tw/stock/api/getStockInfo.jsp?ex_ch=tse_t00.tw|tse_2330.tw&json=1&delay=0
+```
+
+Feeds the veto-only intraday confirmation step. ~5-second delayed snapshot; `rtcode == "0000"` means OK.
+
+- `ex_ch`: pipe-separated `tse_<code>.tw` entries; the TAIEX index is `tse_t00.tw`. Batch up to ~50 codes per request.
+- Needs a browser UA. If the response comes back empty or odd, GET `https://mis.twse.com.tw/` first to pick up a session cookie, then retry.
+- `msgArray` row fields: `c` code, `n` name, `z` last trade, `y` reference price, `o`/`h`/`l`, `v` cumulative volume (lots), `t`/`d` snapshot time/date.
+- `z` is `-` when no trade printed in the snapshot window — fall back to the best bid (first value of the `_`-separated `b` field); don't treat the row as missing.
+- **`y` is today's reference price, NOT yesterday's raw close** — ex-dividend/ex-rights days adjust it (verified 2026-07-30: 1216 統一 `y` 75.2 vs prior close 78.2 after ex-dividend). Compute intraday % change against `y`; comparing today's price against the signal day's close across an ex-date misleads.
+
 ## OpenAPI bulk files — LAG ONE TRADING DAY
 
 `https://openapi.twse.com.tw/v1/...` — convenient but the files reflect the **previous** trading day until refreshed. Always check the `Date` field against today before trusting them.

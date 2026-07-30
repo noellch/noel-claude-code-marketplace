@@ -1,6 +1,6 @@
 {
   "name": "nl-tw-stock-entry",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Deterministic daily entry assessment for the Taiwan stock market: hard market gate, pinned screen criteria, watchlist-vs-buy-list discipline, and TWSE data-source gotchas",
   "author": {
     "name": "noellch",
