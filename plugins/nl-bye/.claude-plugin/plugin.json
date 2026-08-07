@@ -1,0 +1,14 @@
+{
+  "name": "nl-bye",
+  "version": "1.0.0",
+  "description": "End-of-session risk sweep — four fixed lanes (unshipped work, outside footprint, half-done state, unstated calls), evidence on every lane, ending in an explicit CLEAR / RISKS FOUND / UNVERIFIED verdict",
+  "author": {
+    "name": "noellch",
+    "url": "https://github.com/noellch"
+  },
+  "homepage": "https://github.com/noellch/noel-claude-code-marketplace",
+  "repository": "https://github.com/noellch/noel-claude-code-marketplace",
+  "license": "MIT",
+  "keywords": ["session-end", "risk", "sweep", "checklist", "verdict", "uncommitted", "side-effects", "sign-off"],
+  "skills": "./skills/"
+}
