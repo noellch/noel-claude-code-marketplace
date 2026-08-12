@@ -117,12 +117,12 @@ Mechanics — endpoints, JSON shape, anchor rules, suggestion-block byte matchin
 
 {fix: a ```suggestion block when the edit is contiguous and known}
 
-（{實跑 | 讀 code 推論}）
+{how you know — only when the claim could otherwise read as observed}
 ```
 
 - **Lead with the tier, then the consequence.** Tier is what to do about it — `Blocking`, `Should fix`, `Nit`, `Context（不用改這裡）` — and is orthogonal to the severity table above, which classifies the defect. The first sentence says what breaks; evidence comes after. A comment that opens with "這個 effect 在 X 時 early return" makes the reader assemble the consequence themselves.
 - **Emit a `suggestion` block by default.** Not being sure of the surrounding idiom is a reason to go read the file, not a reason to describe the fix in prose.
-- **Mark the evidence per comment, not once in the body.** The author reads Files changed one anchor at a time and never sees a global disclaimer. Every comment ends with whether that specific claim was run or reasoned.
+- **Say how you know only where the reader could get it wrong.** A review comment is assumed to come from reading the code, so restating that on every anchor is noise — and a marker identical on all of them carries no information at all. Mark two cases: a claim about runtime behaviour you did not observe, and a comment written as a reproduction ("upload file A, swap in file B, the row now reads…"), which looks like something you watched happen. Better than any label is the command that settles it. Never label a claim inferred when you confirmed it by reading a file you can cite — that understates your own evidence, which is its own kind of wrong.
 - **The review event is the human's call.** Default to `COMMENT`. `REQUEST_CHANGES` blocks the merge and has to be dismissed by a human — say you think it is warranted, then let them press it.
 
 ## Severity Definitions
@@ -166,6 +166,8 @@ Every row below came from a real bad review. Catch yourself before repeating one
 | "Obviously correct, quick skim is enough" | The obvious PRs are where subtle bugs hide |
 | "I'm not sure how the surrounding code is written, so I'll describe the fix" | Go read those lines, then emit a `suggestion` block. Uncertainty is a lookup, not a downgrade |
 | Restate each inline finding in the review body too | Body carries verdict and cross-cutting causes only; duplication makes the author read it twice |
-| One global "I didn't run the app" note in the body | Files changed shows one anchor at a time. Mark measured vs inferred on every comment |
+| One global "I didn't run the app" note in the body | Files changed shows one anchor at a time. Put it on the anchors whose claims need it |
+| Close every comment with the same "didn't run it" tag | A marker that never varies carries no information and reads as hedging. Mark only what a reader could mistake for something you observed |
+| Tag a finding "inferred" when a cited file:line already proves it | That understates your evidence. Cite the line and drop the tag |
 | Submit `REQUEST_CHANGES` because the findings look blocking | Blocking the merge is the human's call. Post `COMMENT`, state the verdict, let them press it |
 | Anchor to the line the finding is about, without checking the diff | Only lines inside a diff hunk are anchorable; the wrong in-diff line succeeds silently |
