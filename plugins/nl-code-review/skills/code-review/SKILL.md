@@ -92,6 +92,39 @@ Use this exact structure. Do not invent your own. Header: PR mode uses `PR #{N} 
 
 **Verified Good is not a compliments section.** A positive claim you did not check (e.g. "no breaking changes" without comparing signatures) is a review defect, exactly like a missed bug. "None." is an acceptable entry.
 
+## Delivering the Review
+
+The section above is the artifact. This one is how it reaches the author when the target is a PR and you are posting rather than printing.
+
+Two surfaces, two jobs. A sentence that appears on both is a sentence the author reads twice.
+
+| Surface | Carries |
+|---------|---------|
+| **Review body** | verdict, root causes that span several findings, PR-description claims that did not survive verification, what you ran and what you only read |
+| **Inline comment** | one finding, anchored to the line that has to change |
+
+The Output Format above is written for printing the whole review in one place. When you post, its finding lists collapse to an index — anchor plus a handful of words, no evidence, no mechanism, no consequence — because each of those now lives on its own anchor. Keep the section headings so the tiers are still countable at a glance. Sections with nothing to move inline (Unverified Claims, Verified Good, Verdict) stay written out in full.
+
+Mechanics — endpoints, JSON shape, anchor rules, suggestion-block byte matching, reworking a submitted review — are in [references/posting-inline-comments.md](references/posting-inline-comments.md). Read it before the first `gh api` call: an anchor outside the diff fails loudly, and an anchor on the wrong in-diff line succeeds quietly.
+
+### Comment shape
+
+```
+**{tier}** — {what breaks, one sentence}
+
+{evidence: file:line the reader can check}
+{mechanism or repro, compressed}
+
+{fix: a ```suggestion block when the edit is contiguous and known}
+
+（{實跑 | 讀 code 推論}）
+```
+
+- **Lead with the tier, then the consequence.** Tier is what to do about it — `Blocking`, `Should fix`, `Nit`, `Context（不用改這裡）` — and is orthogonal to the severity table above, which classifies the defect. The first sentence says what breaks; evidence comes after. A comment that opens with "這個 effect 在 X 時 early return" makes the reader assemble the consequence themselves.
+- **Emit a `suggestion` block by default.** Not being sure of the surrounding idiom is a reason to go read the file, not a reason to describe the fix in prose.
+- **Mark the evidence per comment, not once in the body.** The author reads Files changed one anchor at a time and never sees a global disclaimer. Every comment ends with whether that specific claim was run or reasoned.
+- **The review event is the human's call.** Default to `COMMENT`. `REQUEST_CHANGES` blocks the merge and has to be dismissed by a human — say you think it is warranted, then let them press it.
+
 ## Severity Definitions
 
 Do NOT assign severity by gut feeling. Use these criteria:
@@ -131,3 +164,8 @@ Every row below came from a real bad review. Catch yourself before repeating one
 | "Only one file changed, no cross-repo check needed" | One file in a monorepo can break other services — search sibling services (scoped) |
 | Pad Verified Good with unchecked praise | Positive claims need the same evidence as findings; write "None." if nothing qualifies |
 | "Obviously correct, quick skim is enough" | The obvious PRs are where subtle bugs hide |
+| "I'm not sure how the surrounding code is written, so I'll describe the fix" | Go read those lines, then emit a `suggestion` block. Uncertainty is a lookup, not a downgrade |
+| Restate each inline finding in the review body too | Body carries verdict and cross-cutting causes only; duplication makes the author read it twice |
+| One global "I didn't run the app" note in the body | Files changed shows one anchor at a time. Mark measured vs inferred on every comment |
+| Submit `REQUEST_CHANGES` because the findings look blocking | Blocking the merge is the human's call. Post `COMMENT`, state the verdict, let them press it |
+| Anchor to the line the finding is about, without checking the diff | Only lines inside a diff hunk are anchorable; the wrong in-diff line succeeds silently |
