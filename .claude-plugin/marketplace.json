@@ -195,6 +195,13 @@
       "description": "End-of-session risk sweep — four fixed lanes (unshipped work, outside footprint, half-done state, unstated calls), evidence on every lane, ending in an explicit CLEAR / RISKS FOUND / UNVERIFIED verdict",
       "license": "MIT",
       "keywords": ["session-end", "risk", "sweep", "checklist", "verdict", "uncommitted", "side-effects", "sign-off"]
+    },
+    {
+      "name": "nl-readback",
+      "source": "./plugins/nl-readback",
+      "description": "Clean-room readback: information-isolated readers narrate what code actually does so a human can confirm the mechanism matches their intent",
+      "license": "MIT",
+      "keywords": ["readback", "clean-room", "verification", "mechanism", "behavior-narrative", "agent-written-code"]
     }
   ]
 }

@@ -1,0 +1,14 @@
+{
+  "name": "nl-readback",
+  "version": "1.0.0",
+  "description": "Clean-room readback: information-isolated readers narrate what code actually does so a human can confirm the mechanism matches their intent — for large agent-written diffs the owner can't personally read",
+  "author": {
+    "name": "noellch",
+    "url": "https://github.com/noellch"
+  },
+  "homepage": "https://github.com/noellch/noel-claude-code-marketplace",
+  "repository": "https://github.com/noellch/noel-claude-code-marketplace",
+  "license": "MIT",
+  "keywords": ["readback", "clean-room", "verification", "mechanism", "behavior-narrative", "reverse-walkthrough", "反向導讀", "agent-written-code", "trust"],
+  "skills": "./skills/"
+}
