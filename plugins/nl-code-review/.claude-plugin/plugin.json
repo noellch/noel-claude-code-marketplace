@@ -1,6 +1,6 @@
 {
   "name": "nl-code-review",
-  "version": "1.2.1",
+  "version": "1.3.0",
   "description": "General-purpose code review skill that auto-detects tech stack and applies repo-aware review with optional adversarial pass",
   "author": {
     "name": "noellch",

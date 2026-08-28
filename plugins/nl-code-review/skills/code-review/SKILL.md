@@ -109,19 +109,36 @@ Mechanics — endpoints, JSON shape, anchor rules, suggestion-block byte matchin
 
 ### Comment shape
 
+Findings carry different weight; the layout must show it. One flat paragraph makes a Blocking finding and a nit read the same, and buries the fix inside the diagnosis.
+
+**Blocking / Should fix — sectioned:**
+
 ```
-**{tier}** — {what breaks, one sentence}
+**[{tier}] {headline: what breaks, one sentence — not what the code does}**
 
-{evidence: file:line the reader can check}
-{mechanism or repro, compressed}
+**問題**
 
-{fix: a ```suggestion block when the edit is contiguous and known}
+{mechanism, compressed. Evidence as a bullet list: the file:line chain the reader can
+check themselves. End with the consequence if the headline alone doesn't carry it.}
 
-{how you know — only when the claim could otherwise read as observed}
+**建議修法（範例）**
+
+{a ```suggestion block when the edit is a contiguous replacement of the anchored lines;
+otherwise a fenced code block showing the fixed code}
+
+**測試**
+
+{only when missing coverage is part of the finding: name the specific test that would pin it}
 ```
 
-- **Lead with the tier, then the consequence.** Tier is what to do about it — `Blocking`, `Should fix`, `Nit`, `Context（不用改這裡）` — and is orthogonal to the severity table above, which classifies the defect. The first sentence says what breaks; evidence comes after. A comment that opens with "這個 effect 在 X 時 early return" makes the reader assemble the consequence themselves.
-- **Emit a `suggestion` block by default.** Not being sure of the surrounding idiom is a reason to go read the file, not a reason to describe the fix in prose.
+**Nit — one line, no headings:** `nit：{observation}` plus an optional example block. Section structure on a nit reads heavier than the finding warrants.
+
+**Review body — a counted index:** tiers with counts and a few words each (`**Blocking ×2**（見 inline）：lockfile integrity、檢視版本入口失效`), then everything that has no anchor written out in full — Unverified Claims, PR-description mismatches, the verdict.
+
+Write the section labels and prose in the language the team reviews in (for this user: Traditional Chinese prose, English code); keep identifiers and code exact.
+
+- **Lead with the tier, then the consequence.** Tier is what to do about it — `Blocking`, `Should fix`, `Nit`, `Context（不用改這裡）` — and is orthogonal to the severity table above, which classifies the defect. The headline says what breaks; evidence comes after. A comment that opens with "這個 effect 在 X 時 early return" makes the reader assemble the consequence themselves.
+- **Emit a `suggestion` block by default.** Not being sure of the surrounding idiom is a reason to go read the file, not a reason to describe the fix in prose. When the fix can't be a suggestion block (non-contiguous edit, anchored line isn't the line to change), show the fixed code in a plain fenced block instead — never prose alone.
 - **Say how you know only where the reader could get it wrong.** A review comment is assumed to come from reading the code, so restating that on every anchor is noise — and a marker identical on all of them carries no information at all. Mark two cases: a claim about runtime behaviour you did not observe, and a comment written as a reproduction ("upload file A, swap in file B, the row now reads…"), which looks like something you watched happen. Better than any label is the command that settles it. Never label a claim inferred when you confirmed it by reading a file you can cite — that understates your own evidence, which is its own kind of wrong.
 - **The review event is the human's call.** Default to `COMMENT`. `REQUEST_CHANGES` blocks the merge and has to be dismissed by a human — say you think it is warranted, then let them press it.
 
