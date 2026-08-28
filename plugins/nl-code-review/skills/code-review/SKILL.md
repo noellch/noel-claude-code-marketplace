@@ -1,6 +1,6 @@
 ---
 name: code-review
-description: Use when reviewing PRs, checking code quality, or when user says "review PR", "code review", "check my changes", "review my code"
+description: Use when reviewing PRs, checking code quality, or when user says "review PR", "code review", "check my changes", "review my code", or asks to post review comments to a PR ("留 inline comment", "post inline comments")
 ---
 
 # General-Purpose Code Review
@@ -10,6 +10,15 @@ description: Use when reviewing PRs, checking code quality, or when user says "r
 Structured code review with mandatory convention discovery, standardized output, and verified findings. Works across any repository by detecting tech stack and reading project-specific rules first.
 
 **Execution note:** a proper review reads many full files. When you are orchestrating a session, dispatch a fresh-context subagent carrying this skill's process and the review target, instead of reviewing inline in the main conversation.
+
+## Arguments
+
+`/code-review {target?} {--post?}`
+
+- `{target}` — PR number / URL / branch name; resolution rules in Step 0.
+- `--post` — after producing the review, also deliver it to the PR as one review with inline comments (see Delivering the Review). PR mode only; in Local mode there is nothing to post to — say so and print the review instead.
+
+**Without `--post`, print the review in chat and stop.** Do not post anything to GitHub, and do not ask "want me to post this?" — the user opts in by passing the flag or by asking afterwards ("留 inline comment"), at which point Delivering the Review applies to the review you already produced.
 
 ## Step 0: Resolve the Review Target
 
@@ -94,7 +103,7 @@ Use this exact structure. Do not invent your own. Header: PR mode uses `PR #{N} 
 
 ## Delivering the Review
 
-The section above is the artifact. This one is how it reaches the author when the target is a PR and you are posting rather than printing.
+The section above is the artifact. This one is how it reaches the author when you are posting rather than printing — which happens only when the invocation carried `--post` or the user asked for it (see Arguments).
 
 Two surfaces, two jobs. A sentence that appears on both is a sentence the author reads twice.
 
