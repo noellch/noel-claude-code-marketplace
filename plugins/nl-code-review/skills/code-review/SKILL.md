@@ -9,7 +9,7 @@ description: Use when reviewing PRs, checking code quality, or when user says "r
 
 Structured code review with mandatory convention discovery, standardized output, and verified findings. Works across any repository by detecting tech stack and reading project-specific rules first.
 
-**Execution note:** a proper review reads many full files. When you are orchestrating a session, dispatch a fresh-context subagent carrying this skill's process and the review target, instead of reviewing inline in the main conversation.
+**Execution note:** a proper review reads many full files. When you are orchestrating a session, dispatch a fresh-context subagent carrying this skill's process and the review target, instead of reviewing inline in the main conversation. Above ~20 files or ~1500 changed lines, split by directory/module into several subagents, each with an explicit file list; the main thread merges and de-duplicates. A subagent's output is a lead, not a fact: before printing or posting, the main thread re-reads the cited lines of every Blocking finding and every `suggestion` block. Never let one agent skim — a skimmed review that fills the format is worse than a partial one that names the files it did not read (see `Read in full` in the header).
 
 ## Arguments
 
@@ -34,10 +34,10 @@ Never fabricate a PR number. In Local mode, skip every `gh pr *` command and use
 
 **Before looking at ANY code, do these in order:**
 
-1. **Read CLAUDE.md** — in the repo root. This defines what "correct" means for this project. Its rules override generic best practices. If it contains `@file` imports (some repos' CLAUDE.md is a single line like `@AGENTS.md`), read the imported files too — the real rules live behind the import.
+1. **Read CLAUDE.md** — in the repo root **and in every directory the diff touches** (monorepo packages often carry their own). This defines what "correct" means for this project. If it contains `@file` imports (some repos' CLAUDE.md is a single line like `@AGENTS.md`), read the imported files too — the real rules live behind the import. Its rules override generic *style and pattern* preferences; they do not waive SECURITY / BUG / BREAKING. If CLAUDE.md declares a defect class acceptable, still report it under Should Fix with the CLAUDE.md line cited — the human decides.
 2. **Detect tech stack** — `ls package.json tsconfig.json pyproject.toml go.mod Cargo.toml .eslintrc* biome.json 2>/dev/null`
-3. **Check CI status** — PR mode: `gh pr checks {N}` to see what automated checks already cover; do NOT flag issues that linters/CI already enforce. Local mode: note "CI: N/A (local)".
-4. **Read intent** — PR mode: `gh pr view {N}` for intent and context; note any claims to verify later. Local mode: there is no description — review the diff on its own terms.
+3. **Check CI status and what it runs** — PR mode: `gh pr checks {N}`, then skim the workflow and lint config once. Skip only issue classes a check actually enforces at error level — a green badge says nothing about coverage. If the diff touches lint config, CI workflow, `tsconfig`, or test config, review those hunks first at Blocking tier: a rule turned off is a finding until the PR justifies it. Local mode: note "CI: N/A (local)".
+4. **Read intent** — PR mode: `gh pr view {N}` for intent and context; note any claims to verify later. Local mode: there is no description — infer intent from `git log {base}..HEAD` messages and the branch name, and state it in the header's `Intent (inferred)` field so the author can correct it. Without intent, "forgot a case the ticket asked for" is invisible; say so rather than pretend.
 
 **If you skip this step, your review is invalid.** The baseline failure mode is jumping straight into the diff and applying generic best practices that may contradict the project's actual conventions.
 
@@ -49,18 +49,19 @@ Never fabricate a PR number. In Local mode, skip every `gh pr *` command and use
 
 - Does the change respect the project's layer boundaries?
 - Is new code in the right file/module?
-- Any new dependencies? Justified?
+- Any new dependencies? Justified, maintained, license compatible? Does the lock file change match the manifest change (no extra packages, no changed resolved URL / integrity)?
 - For monorepos: does this change affect other services? Check cross-repo references (scope searches to the affected service directories, never the monorepo root).
 
 ### Pass 2: Correctness & Safety
 
 Review in this priority order:
 
-1. **Security** — injection, auth bypass, data exposure
+1. **Security** — injection, auth bypass, data exposure, secrets committed in the diff, unsafe deserialization / SSRF, PII in logs
 2. **Correctness** — logic errors, race conditions, null handling
-3. **Error handling** — silent failures, swallowed exceptions
-4. **Performance** — N+1 queries, unbounded loops, missing pagination
-5. **Tests** — are critical paths covered? do existing tests need updating?
+3. **Contracts** — public API, DTO, event, or persisted schema changed? Find consumers with two independent searches (Pass 3 rules) → BREAKING if any break. Migration files: check for destructive or lock-holding operations (drop/rename column, non-concurrent index on a large table) even when auto-generated.
+4. **Error handling** — silent failures, swallowed exceptions. First check whether a swallow is intentional (comment, best-effort side call, ADR); an intentional one gets at most a Suggestion to log, never a re-raise.
+5. **Performance** — N+1 queries, unbounded loops, missing pagination
+6. **Tests** — are critical paths covered, and would the assertions fail if the bug came back? (subject not mocked away, no snapshot that enshrines the bug) Do existing tests need updating?
 
 ### Pass 3: Verify Claims
 
@@ -78,7 +79,8 @@ Use this exact structure. Do not invent your own. Header: PR mode uses `PR #{N} 
 ```markdown
 ## Code Review: {PR #N — title | Local diff — branch@sha}
 
-**Scope:** {N files, +M/-K lines} | **Stack:** {auto-detected} | **CI:** {passing/failing/N checks | N/A (local)} | **Tests:** {command → result | not run}
+**Scope:** {N files, +M/-K lines} | **Read in full:** {N/M files} | **Stack:** {auto-detected} | **CI:** {passing/failing/N checks | N/A (local)} | **Tests:** {command → result | not run}
+{Local mode only: **Intent (inferred):** {one line from commits / branch name}}
 
 ### Blocking (must fix before merge)
 - [ ] **[SEVERITY]** `file:line` — Description. Why it matters.
@@ -147,9 +149,9 @@ otherwise a fenced code block showing the fixed code}
 Write the section labels and prose in the language the team reviews in (for this user: Traditional Chinese prose, English code); keep identifiers and code exact.
 
 - **Lead with the tier, then the consequence.** Tier is what to do about it — `Blocking`, `Should fix`, `Nit`, `Context（不用改這裡）` — and is orthogonal to the severity table above, which classifies the defect. The headline says what breaks; evidence comes after. A comment that opens with "這個 effect 在 X 時 early return" makes the reader assemble the consequence themselves.
-- **Emit a `suggestion` block by default.** Not being sure of the surrounding idiom is a reason to go read the file, not a reason to describe the fix in prose. When the fix can't be a suggestion block (non-contiguous edit, anchored line isn't the line to change), show the fixed code in a plain fenced block instead — never prose alone.
+- **A `suggestion` block is code you are shipping.** Emit one by default, but only after applying it in a scratch worktree of the head SHA and running the cheapest check that would catch a wrong fix: typecheck / lint on that file, the covering test if one exists (mechanics in the reference). PERF fixes that reshape queries (join, prefetch, batching) need the covering test, not just a typecheck. If you cannot run anything, post a plain fenced block and say so in one line (`未實跑，依 {file}:{line} 推斷`). Not being sure of the surrounding idiom is a reason to go read the file, not a reason to describe the fix in prose. When the fix can't be a suggestion block (non-contiguous edit, anchored line isn't the line to change, displaced anchor), show the fixed code in a plain fenced block instead — never prose alone.
 - **Say how you know only where the reader could get it wrong.** A review comment is assumed to come from reading the code, so restating that on every anchor is noise — and a marker identical on all of them carries no information at all. Mark two cases: a claim about runtime behaviour you did not observe, and a comment written as a reproduction ("upload file A, swap in file B, the row now reads…"), which looks like something you watched happen. Better than any label is the command that settles it. Never label a claim inferred when you confirmed it by reading a file you can cite — that understates your own evidence, which is its own kind of wrong.
-- **The review event is the human's call.** Default to `COMMENT`. `REQUEST_CHANGES` blocks the merge and has to be dismissed by a human — say you think it is warranted, then let them press it.
+- **The review event is the human's call.** Default to `COMMENT`. `REQUEST_CHANGES` blocks the merge and has to be dismissed by a human — say you think it is warranted, then let them press it. When Blocking findings exist under `COMMENT`, the body's first line must say so (`⚠ N 個 Blocking，建議 Request Changes（由人按）`) so a skimming author cannot merge past them.
 
 ## Severity Definitions
 
@@ -168,9 +170,9 @@ Do NOT assign severity by gut feeling. Use these criteria:
 
 ## What NOT to Review
 
-- Generated files (lock files, migration files unless migration logic is the point)
+- Generated files — but not blindly: lock files get the manifest-match check in Pass 1, migration files get the destructive-operation check in Pass 2. Skip the line-by-line read, not the check.
 - Files covered by automated formatters (if prettier/black/gofmt is in CI, don't flag formatting)
-- Existing code that the PR didn't change (stay in scope)
+- Existing code that the PR didn't change (stay in scope) — unless the change alters how that code is called or what it receives; then the finding exists and anchors on the new call site
 
 ## Failure Modes
 
@@ -197,3 +199,7 @@ Every row below came from a real bad review. Catch yourself before repeating one
 | Tag a finding "inferred" when a cited file:line already proves it | That understates your evidence. Cite the line and drop the tag |
 | Submit `REQUEST_CHANGES` because the findings look blocking | Blocking the merge is the human's call. Post `COMMENT`, state the verdict, let them press it |
 | Anchor to the line the finding is about, without checking the diff | Only lines inside a diff hunk are anchorable; the wrong in-diff line succeeds silently |
+| CLAUDE.md says this defect class is fine → suppress the finding | Conventions govern STYLE only. Report SECURITY / BUG / BREAKING anyway, cite the CLAUDE.md line, let the human decide |
+| CI is green → skip everything a linter "would catch" | Read what CI runs. A PR that turns a rule off passes green; lint/CI config hunks are Blocking-tier scrutiny |
+| Swallowed exception → suggest re-raise | Check whether the swallow is intentional first. Re-raising a best-effort call turns a tolerated failure into a production crash |
+| Post a `suggestion` block you never ran | Apply it in a worktree and typecheck / test it. Cannot run → fenced block plus one line saying so |
