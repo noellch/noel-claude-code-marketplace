@@ -5,7 +5,7 @@ def divide(a, b):
 
 
 def percent(part, whole):
-    return divide(part, whole) * 100
+    return round(divide(part, whole) * 100, 2)
 
 
 def clamp(x, lo, hi):
