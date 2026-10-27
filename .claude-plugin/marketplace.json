@@ -38,7 +38,7 @@
     {
       "name": "nl-pr-comment-resolve",
       "source": "./plugins/nl-pr-comment-resolve",
-      "description": "Resolve PR review comments with structured workflow: fetch, evaluate, implement, commit, and reply with commit SHA links",
+      "description": "Resolve PR review comments end to end: one confirmation gate, one commit per thread, tests before push, replies with commit links, PR-level comments answered, reviewers re-requested",
       "license": "MIT",
       "keywords": ["pr", "review", "comments", "resolve", "github"]
     },
