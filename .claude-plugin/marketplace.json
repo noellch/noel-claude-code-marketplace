@@ -66,7 +66,7 @@
     {
       "name": "nl-stack-pr",
       "source": "./plugins/nl-stack-pr",
-      "description": "Manage stacked pull request chains: visualize, add, update, and collapse PRs as upstream branches merge using rebase --onto",
+      "description": "Manage stacked pull request chains with rebase --onto from captured old tips: collapse after squash merges, update when a parent changes, add on top via nl-create-pr, abandon into one PR",
       "license": "MIT",
       "keywords": ["pr", "stacked-pr", "git", "rebase", "branch"]
     },

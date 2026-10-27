@@ -1,7 +1,7 @@
 {
   "name": "nl-stack-pr",
-  "version": "1.0.0",
-  "description": "Manage stacked pull request chains: visualize, add, update, and collapse PRs as upstream branches merge",
+  "version": "1.1.0",
+  "description": "Manage stacked pull request chains with rebase --onto from captured old tips: collapse after squash merges, update when a parent changes, add on top via nl-create-pr, abandon into one PR",
   "author": {
     "name": "noellch",
     "url": "https://github.com/noellch"
@@ -9,6 +9,6 @@
   "homepage": "https://github.com/noellch/noel-claude-code-marketplace",
   "repository": "https://github.com/noellch/noel-claude-code-marketplace",
   "license": "MIT",
-  "keywords": ["pr", "stacked-pr", "git", "rebase", "branch"],
+  "keywords": ["pr", "stacked-pr", "git", "rebase", "branch", "force-with-lease"],
   "skills": "./skills/"
 }

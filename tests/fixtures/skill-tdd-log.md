@@ -198,3 +198,34 @@ REFACTOR：Phase 0 改成整份讀 CLAUDE.md；`--draft` 只在「有測試指�
 
 - 真實 `gh pr create`（含 `--body-file`、`--draft`）、PR 已存在分支、fork remote
 - 字數 646 → 1192
+
+# nl-stack-pr 1.0.0 → 1.1.0（2026-10-27）
+
+分支：`feat/stack-pr-1.1.0`。Fixture：`fixtures/make_stackrepo.py`：bare origin（HEAD=develop）；PR1 `feat/a`（a1 a2 a3）被 squash merge 進 develop 後分支刪除；PR2 `feat/b`（從 a2 分出，自己只有 b1）仍開；使用者 clone 在 `feat/b`、乾淨、未 fetch（`origin/feat/a` 過期停在 a2、`origin/develop` 過期）。push 到本地 bare 為真實操作，`gh` 不可用（PR 事實由 prompt 提供）。
+
+實查前提：Grazioso `squash=true`、`delete_branch_on_merge=true`，最近 merge 皆 squash（merge commit 單親）。
+
+## RED（1.0.0）
+
+| 觀察點 | 結果 |
+|---|---|
+| 決策樹 L67-77（parent 已刪 → plain `git rebase origin/develop`） | 照做 → `CONFLICT (content): f.txt`、`could not apply c907dd3 a1`；agent `--abort` 後自行改 `--onto origin/develop 3720355`（取自 stale `origin/feat/a`）才成功 |
+| PR1 最終 head SHA | clone 裡不存在（`fatal: Not a valid object name 757940b`）：分支刪了、沒 fetch 過。`gh pr view headRefOid` 不足，要 `refs/pull/N/head` 或 fetch 前存 stale ref |
+| 前置 clean-tree、push 前驗證 | agent 自行做了（skill 沒要求） |
+| 最終 origin 狀態 | 正確（b1 單獨在 squash commit 之上）— 靠 agent 偏離 skill 達成 |
+
+## DESIGN → GREEN（1.1.0，SKILL.md 708 → 1096 字）
+
+- 核心規則一句：stacked 分支一律 `rebase --onto <new> <old>`，old = 實際的舊 base；plain rebase 在 squash / amend 後會重放 parent commit
+- Step 0：clean tree；`BASE` 取 PR1 的 `baseRefName`（不假設 develop）；**fetch 前先存每個 `origin/<branch>` 的 SHA**；fetch 不 `--prune`；非本人 PR 要確認
+- Collapse：先 `gh pr view` 看 GitHub 是否已 retarget；old base = `git merge-base feat/b <captured origin/feat/a 或 refs/pull/N/head>`；衝突 → continue/abort，rebase 中絕不 push；push 前 own-commit 數量與 subject 比對 + `git range-diff` + 測試；`--force-with-lease=<branch>:<舊 tip>`；PR3 以 captured 舊 `origin/feat/b` 為 old
+- Parent 有新 commit / amend：同一招
+- 加 PR：分支後交給 nl-create-pr（base = parent）；abandon 流程關舊 PR
+- Done When 完成條件；Failure Modes 改藉口型；刪 Common Mistakes 重述列（其中兩列本身是錯的）
+
+GREEN（fixture `--reset` 後重跑，origin 實查）：fetch 前存 `origin/feat/a`、`origin/feat/b`；`OLD = merge-base`；`--onto origin/develop $OLD` 無衝突；push 前 count/subject/range-diff/測試四項驗證；`--force-with-lease=feat/b:<舊 tip>`；origin 的 `feat/b` 只有 b1、f.txt 與 develop 相同。沒有 plain rebase、沒有衝突。
+
+## 未驗證
+
+- GitHub 自動 retarget 行為、`refs/pull/N/head` fallback、`gh pr edit --base`（本地 bare 無 GitHub）
+- PR3 層、parent amend 情境、abandon 流程

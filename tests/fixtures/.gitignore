@@ -7,3 +7,7 @@ devrepo.git/
 mkt-clone/
 pcr-review-*.json
 __pycache__/
+stackrepo/
+stackrepo.git/
+stackrepo-side/
+stackrepo-ground-truth.txt
