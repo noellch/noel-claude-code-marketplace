@@ -1,6 +1,6 @@
 {
   "name": "nl-debug",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Loop-first discipline for hard bugs — build a tight red-capable reproduction loop before hypothesising, minimise it into a regression test; extends superpowers systematic-debugging with Matt Pocock's diagnosing-bugs feedback-loop rigor",
   "author": {
     "name": "noellch",

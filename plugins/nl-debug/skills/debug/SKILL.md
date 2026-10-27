@@ -32,6 +32,24 @@ Run it red. Confirm it's the *user's* symptom, not a nearby one. Then shrink to 
 
 Generate 3–5 ranked hypotheses **before testing any** — a single hypothesis anchors on the first plausible idea. Each states a prediction: "if X is the cause, changing Y makes it disappear." Show the list to the user (they often re-rank instantly). Then test **one at a time, one variable per probe**. Tag debug logs `[DEBUG-xxxx]` so cleanup is one grep.
 
+### Depth check — 5 Whys (before declaring a cause final)
+
+A confirmed hypothesis can still be a symptom. Ask "why did [X] happen?" up to 5 times. Stop early at a system/service boundary (external API, OS, network), a deliberate policy or business decision, or an external constraint outside your codebase.
+
+**If the last Why lands in a different file or module than your first diagnosis → re-scope the fix.** The original candidate was a symptom.
+
+```
+Bug: "Checkout returns 500"
+Why 1: payment service threw an exception
+Why 2: exchange rate was None
+Why 3: FX API returned empty response
+Why 4: API key had expired
+→ Root cause: key rotation was never automated (policy gap)
+Fix scope: add key expiry monitoring, not just catch the exception
+```
+
+Put the Why chain in whatever report or close-out note you already give.
+
 ## Phase 4 — Fix + regression test
 
 Write the failing test **before** the fix — *if* a correct seam exists (one that exercises the real bug pattern at the call site). If no correct seam exists, **that is the finding**: the architecture is preventing lock-down — note it. Otherwise: fail → fix → pass → re-run the original (un-minimised) loop.
