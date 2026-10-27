@@ -27,6 +27,20 @@ Asana ticket creation and issue investigation for Crescendo Lab.
 | `asana-ticket` | "create ticket", "open bug" | Standardized ticket creation with project routing and custom fields |
 | `analyze-issue` | "分析 issue", "analyze ticket" | Systematic investigation workflow for Support tickets |
 
+### nl-code-review
+
+General-purpose code review — convention discovery first, every read at the PR head, severity and tier from fixed tables, optional one-shot posting as inline PR comments.
+
+```bash
+/plugin install nl-code-review@noel
+```
+
+- `/code-review {PR | branch} {--post?}` — PR mode via `gh`, Local mode via `git diff`; reads, greps and tests run at `head` in a throwaway worktree, never on whatever branch is checked out
+- Mandatory convention discovery before any code: CLAUDE.md at head (with `@file` imports), tech stack, what CI actually enforces, PR intent, existing review threads
+- Severity → Tier tables instead of gut feeling; BREAKING needs a cited broken call site, unknown external consumers go to Unverified Claims and Needs Discussion
+- PR-description claims are verified, absence needs two independent searches, tests are run at head and reported as run or not run
+- `--post`: one review with in-diff anchored inline comments, `suggestion` blocks applied and typechecked before posting, event always `COMMENT` (Request Changes and Approve stay human)
+
 ### nl-handle-issue
 
 Single entry point for issue resolution — classifies scope (small/medium/large), orchestrates the right workflow, and ensures every step from investigation to delivery is completed.
