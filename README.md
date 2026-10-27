@@ -41,19 +41,6 @@ Single entry point for issue resolution — classifies scope (small/medium/large
 - Flow upgrade detection: auto-escalates when scope is bigger than expected
 - Never auto-commits — waits for user instruction
 
-### nl-living-docs
-
-Detect documentation drift from code changes with severity-ranked reports and actionable diff suggestions.
-
-```bash
-/plugin install nl-living-docs@noel
-```
-
-- Systematic drift detection across API docs, READMEs, and code-level docs (JSDoc/docstring)
-- Every finding includes before/after diff suggestions ready to apply
-- Two modes: manual audit (`/living-docs`) and incremental post-commit detection
-- Severity scoring: CRITICAL (causes failures) / WARNING (incomplete) / INFO (cosmetic)
-
 ### nl-pr-comment-resolve
 
 Resolve PR review comments with structured workflow: fetch, evaluate, implement, commit, and reply with commit SHA links.
@@ -90,19 +77,6 @@ Deep analysis of public resources (URLs, articles, GitHub repos, tweets, tech ne
 - Summarize → Opine → Advise (three-layer analysis)
 - Supports articles, blog posts, GitHub repos, tweets, tech news
 - Triggers on "幫我整理", "summarize this", "分析這篇"
-
-### nl-terminal-diagrams
-
-Render precise, perfectly-aligned diagrams in the terminal using `graph-easy`.
-
-```bash
-/plugin install nl-terminal-diagrams@noel
-```
-
-- Flowcharts and architecture diagrams via `graph-easy --as=boxart`
-- Automatic method selection: graph-easy for graphs, hand-draw for sequence diagrams and trees
-- Supports both Graph::Easy native syntax and DOT format input
-- Requires: `brew install cpanminus && cpanm --local-lib=~/perl5 local::lib Graph::Easy`
 
 ### nl-kb
 

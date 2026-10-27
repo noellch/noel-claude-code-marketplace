@@ -36,13 +36,6 @@
       "keywords": ["issue", "bug", "fix", "debug", "investigate", "workflow", "dispatcher", "lifecycle"]
     },
     {
-      "name": "nl-living-docs",
-      "source": "./plugins/nl-living-docs",
-      "description": "Detect documentation drift from code changes with severity-ranked reports and actionable diff suggestions",
-      "license": "MIT",
-      "keywords": ["documentation", "drift", "sync", "audit", "api-docs", "readme", "jsdoc", "living-documentation"]
-    },
-    {
       "name": "nl-pr-comment-resolve",
       "source": "./plugins/nl-pr-comment-resolve",
       "description": "Resolve PR review comments with structured workflow: fetch, evaluate, implement, commit, and reply with commit SHA links",
@@ -62,13 +55,6 @@
       "description": "Deep analysis of public resources (URLs, articles, GitHub repos, tweets, tech news) with critical opinions, pros/cons, and actionable insights",
       "license": "MIT",
       "keywords": ["resource", "digest", "summary", "analysis", "url", "article", "insights"]
-    },
-    {
-      "name": "nl-terminal-diagrams",
-      "source": "./plugins/nl-terminal-diagrams",
-      "description": "Render precise, perfectly-aligned diagrams in the terminal using graph-easy. Covers flowcharts, architecture diagrams, and relationship graphs with Unicode boxart output",
-      "license": "MIT",
-      "keywords": ["diagram", "flowchart", "graph", "terminal", "ascii", "boxart", "graph-easy", "architecture"]
     },
     {
       "name": "nl-create-pr",
@@ -99,13 +85,6 @@
       "keywords": ["knowledge-base", "kb", "wiki", "collect", "compile", "notes", "raw"]
     },
     {
-      "name": "nl-playlist-curation",
-      "source": "./plugins/nl-playlist-curation",
-      "description": "Curate Spotify playlists with O(?) complexity notation naming and point-of-view track selection (15-20 tracks per playlist)",
-      "license": "MIT",
-      "keywords": ["spotify", "playlist", "music", "curation", "recommendations", "naming"]
-    },
-    {
       "name": "nl-writing-skills",
       "source": "./plugins/nl-writing-skills",
       "description": "Write and edit Claude Code skills with a TDD-driven process (baseline-test, write, refactor) fused with a design vocabulary (predictability, leading words, information hierarchy) for building predictable skills",
@@ -134,13 +113,6 @@
       "keywords": ["handoff", "context", "resume", "session", "continuity", "compaction"]
     },
     {
-      "name": "nl-index",
-      "source": "./plugins/nl-index",
-      "description": "Router and map for the nl-* skill collection — which skill to reach for in a given situation, how they chain, and where the collisions and gaps are",
-      "license": "MIT",
-      "keywords": ["index", "router", "map", "skills", "navigation", "which-skill", "dispatcher"]
-    },
-    {
       "name": "nl-debug",
       "source": "./plugins/nl-debug",
       "description": "Loop-first discipline for hard bugs — build a tight red-capable reproduction loop before hypothesising, minimise it into a regression test; extends superpowers systematic-debugging with Matt Pocock's diagnosing-bugs feedback-loop rigor",
@@ -167,34 +139,6 @@
       "description": "Execute an approved plan via a fresh implementer subagent per task, per-task spec+quality review, and a broad final review — the execute stage of research-plan-execute",
       "license": "MIT",
       "keywords": ["execute", "subagent", "implementer", "task-review", "ledger", "file-handoff", "plan-execution", "tdd"]
-    },
-    {
-      "name": "nl-release-watch",
-      "source": "./plugins/nl-release-watch",
-      "description": "Post-merge release triage — time-boxed checklist ending in an evidence-backed verdict; verifies the monitor's heartbeat before trusting zero errors and never signs off silently",
-      "license": "MIT",
-      "keywords": ["release", "post-merge", "deploy", "monitoring", "sentry", "smoke-test", "verdict", "heartbeat", "sign-off"]
-    },
-    {
-      "name": "nl-tw-stock-entry",
-      "source": "./plugins/nl-tw-stock-entry",
-      "description": "Deterministic daily entry assessment for the Taiwan stock market — hard market gate, pinned screen criteria, watchlist-vs-buy-list discipline, and TWSE data-source gotchas",
-      "license": "MIT",
-      "keywords": ["taiwan", "stock", "twse", "screening", "technical-analysis", "entry", "finance"]
-    },
-    {
-      "name": "nl-tw-stock-checkup",
-      "source": "./plugins/nl-tw-stock-checkup",
-      "description": "Single-stock health check and position decisions for TWSE stocks — four-panel checkup card, thesis-first hold/sell discipline, sunk-cost rule, buy verdicts gated by tw-stock-entry",
-      "license": "MIT",
-      "keywords": ["taiwan", "stock", "twse", "checkup", "position", "stop-loss", "take-profit", "fundamentals"]
-    },
-    {
-      "name": "nl-bye",
-      "source": "./plugins/nl-bye",
-      "description": "End-of-session risk sweep — four fixed lanes (unshipped work, outside footprint, half-done state, unstated calls), evidence on every lane, ending in an explicit CLEAR / RISKS FOUND / UNVERIFIED verdict",
-      "license": "MIT",
-      "keywords": ["session-end", "risk", "sweep", "checklist", "verdict", "uncommitted", "side-effects", "sign-off"]
     },
     {
       "name": "nl-readback",
