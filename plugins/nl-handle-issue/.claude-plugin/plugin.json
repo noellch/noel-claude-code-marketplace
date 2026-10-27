@@ -1,6 +1,6 @@
 {
   "name": "nl-handle-issue",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Single entry point for issue resolution: classifies scope, orchestrates investigation with mandatory root-cause report, and chains sub-skills from debugging to PR creation",
   "author": {
     "name": "noellch",

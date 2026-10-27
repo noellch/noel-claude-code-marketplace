@@ -1,164 +1,138 @@
 ---
 name: handle-issue
-description: Use when assigned an issue, bug report, error message, or feature request — classifies scope and orchestrates the full lifecycle from investigation to PR creation
+description: Use when assigned an issue, bug report, error message, traceback, or support ticket — classifies scope, routes to the owning nl-* skill, and makes sure every step runs to completion. Not for feature requests (those start at nl-grill or nl-research-plan-execute).
 ---
 
 # Handle Issue
 
-Single entry point for issue resolution. Classifies scope, selects the right workflow, and ensures every step is completed.
+Single entry point for issue resolution: **intake → classify → route → ensure completion**.
 
-**Boundaries:** this skill's job is intake → classify → route → ensure completion. It does NOT re-teach debugging, planning, or PR mechanics — each flow delegates to the owning skill (`nl-debug`, `nl-research-plan-execute`, `nl-create-pr`).
+**Boundaries:** this skill is a router. It does not teach debugging, planning, execution, review, verification, or PR mechanics — each flow delegates to the owning skill and only checks that the step actually happened:
+
+| Step | Owner |
+|------|-------|
+| root-cause investigation | `nl-debug` |
+| Asana support-ticket intake + diagnosis | `cl-support:triage` |
+| plan → tickets → execute → verify (large) | `nl-research-plan-execute` |
+| verification before any "done" claim | `nl-verify` |
+| commit / PR | `nl-create-pr` (FoD scope gate) |
 
 ## Phase 1: Intake
 
-Gather context from whatever the user provides:
-
 | Input | Action |
 |-------|--------|
-| Asana ticket URL | Fetch ticket details via Asana MCP |
-| Error message / traceback | Note the error, identify service |
+| Asana **support** ticket URL (Support project, or a customer-reported bug — when unsure, ask) | Run `cl-support:triage` first — it owns intake and diagnosis. Its root cause **replaces** the flow's Investigate step: resume at Phase 2, then go straight to the Investigation Report. |
+| Other Asana task URL | Fetch via Asana MCP |
+| GitHub issue URL | `gh issue view` |
+| Sentry issue URL | Fetch via Sentry MCP — event, stack, frequency |
+| Slack thread link | Read the thread; keep the link as the issue's key (ticket numbers in the thread may be reused) |
+| Error message / traceback | Identify the service from the stack |
 | Verbal description | Ask clarifying questions if ambiguous |
-| GitHub issue URL | Fetch issue via `gh issue view` |
 
-**Output:** One-paragraph problem statement with: what's broken, which service(s), who's affected.
+If intake shows nothing is broken — the request is for new behaviour — stop: that is a feature, hand it to `nl-grill` (unclear requirements) or `nl-research-plan-execute` (spec exists).
+
+**Output:** one-paragraph problem statement — what's broken, which service(s), who's affected.
 
 ## Phase 2: Classify Scope
 
-```
-Assess the issue
-  │
-  ├─ Touches 1-2 files, clear fix?
-  │   └─ SMALL — go to Quick Fix flow
-  │
-  ├─ Touches 3-10 files, needs investigation?
-  │   └─ MEDIUM — go to Investigate & Fix flow
-  │
-  └─ Crosses services, needs new APIs/pages, or 3+ independent tasks?
-      └─ LARGE — go to Plan & Build flow
-```
+Classify on signals visible **at intake**, not on file counts you can't know yet:
 
-Tell the user: **"This looks like a [SMALL/MEDIUM/LARGE] issue. I'll use the [flow name] workflow."**
+| Size | Signals |
+|------|---------|
+| **SMALL** | Single service; the error or report already points at a location; no new API, page, or migration |
+| **MEDIUM** | Single service; cause unknown, needs investigation; no new API, page, or migration |
+| **LARGE** | Crosses services, needs a new API / page / DB migration, or decomposes into 3+ independent tasks |
 
-If uncertain, ask the user.
+Tell the user, in their language: *"This looks like a [SMALL/MEDIUM/LARGE] issue — using the [flow] workflow."* If uncertain, ask.
 
-## Flow A: Quick Fix (Small)
+Classification is provisional until the Investigation Report — see **Re-scope** below.
+
+## Flow A: Quick Fix (SMALL)
 
 ```
-1. Debug          → Use: nl-debug (extends systematic-debugging)
-                     Find root cause, not just symptoms
-2. Fix            → Edit code directly
-3. Verify         → Run relevant tests
-4. Deliver        → Use: commit (when asked)
+1. Debug     → nl-debug (root cause, not symptom)
+2. Report    → Investigation Report (2-sentence version is fine)
+3. Fix       → edit code directly
+4. Verify    → nl-verify
+5. Deliver   → nl-create-pr, only when asked
 ```
 
-**Skip planning.** Small fixes don't need plans — they need correct diagnosis.
+No plan. Small fixes need a correct diagnosis, not a document.
 
-## Flow B: Investigate & Fix (Medium)
-
-```
-1. Investigate    → Use: analyze-issue (if Asana ticket)
-                     or nl-debug (if error/traceback; extends systematic-debugging)
-                     If classified as bug: apply 5 Whys (see below)
-                     Output: root cause + affected files list
-2. Plan           → Write a short plan (3-7 steps) in the conversation
-                     List files to change and what each change does
-                     Get user confirmation before proceeding
-3. Execute        → Fix step by step, verify after each change
-4. Verify         → Run tests, type-check if relevant
-5. Deliver        → Use: commit (when asked)
-```
-
-## Flow C: Plan & Build (Large)
+## Flow B: Investigate & Fix (MEDIUM)
 
 ```
-1. Research       → Use: analyze-issue (if ticket)
-                     Explore codebase to understand existing patterns
-                     Identify all services/repos involved
-2. Plan           → Use: research-plan-execute
-                     Produces structured plan with independent tasks
-                     User MUST confirm plan before execution
-3. Execute        → Parallel subagents for independent tasks
-                     Sequential for dependent tasks
-4. Review         → Self-review the full changeset
-5. Verify         → Run all relevant tests and checks
-6. Deliver        → Use: commit-push-pr (when asked)
+1. Investigate → nl-debug (errors / tracebacks)
+                 or nl-asana-ticket:analyze-issue (tickets not already triaged)
+2. Report      → Investigation Report — get user confirmation
+3. Plan        → 3-7 steps in the conversation: files to change, what each change does
+                 Get user confirmation before touching code
+4. Fix         → work through the plan
+5. Verify      → nl-verify
+6. Deliver     → nl-create-pr, only when asked
 ```
 
-## 5 Whys — Bug Root Cause Depth Check (Flows A & B)
+Step 4 has no built-in test cadence — project rules and `nl-verify` decide when checks run.
 
-When the issue is classified as a **bug**, after identifying a candidate root cause, validate its depth before declaring it final:
+## Flow C: Plan & Build (LARGE)
 
-Ask "Why did [X] happen?" up to 5 times. Stop early when you reach:
-- A system/service boundary (external API, OS, network)
-- A deliberate policy or business decision
-- An external constraint outside your codebase
-
-**If the 5th Why points to a different file or module than your initial diagnosis → re-scope the fix.** The original candidate was a symptom, not the cause.
-
-Example:
 ```
-Bug: "Checkout returns 500"
-Why 1: payment service threw an exception
-Why 2: exchange rate was None
-Why 3: FX API returned empty response
-Why 4: API key had expired
-→ Root cause: key rotation was never automated (policy gap)
-Fix scope: add key expiry monitoring, not just catch the exception
+1. Investigate → as Flow B step 1
+2. Report      → Investigation Report — get user confirmation
+3. Hand off    → nl-research-plan-execute, with the report as input
+                 It owns research → plan → tickets → execute → verify
+                 (fresh implementer + reviewer per task; never self-review)
+4. Ensure      → confirm the pipeline reached nl-verify; delivery happens only from its menu, only when asked
 ```
 
-Show the Why chain in the Investigation Report's "How I reached this conclusion" section.
+Nothing else. If you find yourself writing execution or review steps here, you are duplicating the owning skill.
 
-## Investigation Report (All Flows)
+## Investigation Report (all flows)
 
-After completing the investigation/debug phase of ANY flow, present a structured report BEFORE moving to the fix:
+Present this **before** any fix, and do not enter Plan / Fix until root cause is attributed. If attribution is still open after a focused ~30-minute effort, say so and ask — do not start designing a fix around a guess.
 
 ```
 ## Investigation Report
 
-**Root Cause:** [One-sentence description of the actual cause]
+**Root Cause:** [one sentence — the cause, not the symptom]
 
-**Investigation Process:**
-1. [First thing I checked and what I found]
-2. [Second thing I checked and what I found]
-3. [Key clue that led to the root cause]
+**Measured:** [facts with evidence — file:line, command output, log excerpt]
+**Inferred:** [conclusions drawn from the measured facts, labelled as inference]
 
-**How I reached this conclusion:**
-[Explain the reasoning chain — what evidence pointed where, what was ruled out, and why this is the root cause rather than a symptom]
+**Ruled out:** [what was checked and why it is not the cause]
 
-**Confidence:** [High/Medium/Low — and why]
+**Confidence:** [High / Medium / Low — tied to what is measured vs inferred]
 
-**Affected files:** [List of files that need changes]
+**Affected files:** [path:line for each change point]
 ```
 
-This report serves two purposes:
-1. The user can validate your reasoning before you start changing code
-2. It creates a record of the investigation for future reference
+Two purposes: the user validates the reasoning before code changes, and the record survives the session.
 
-**Do NOT skip this report.** Even for small fixes, a 2-sentence version is required.
+## Re-scope
 
-## Deliver Phase (All Flows)
+Re-check after the Investigation Report, in either direction:
 
-After the fix is verified, **do NOT auto-commit**. Instead:
+| Current flow | Finding | Action |
+|--------------|---------|--------|
+| SMALL | 5+ files to change | → MEDIUM |
+| SMALL or MEDIUM | Root cause is in another service | → LARGE |
+| SMALL or MEDIUM | Needs a new API, page, or DB migration | → LARGE |
+| MEDIUM | Investigation ends in a one-line fix with a known location | → SMALL |
 
-1. Summarize what was changed and why
-2. Wait for user to say "commit", "PR", or similar
-3. Then use the appropriate commit/PR skill
+Tell the user: *"Scope changed — moving to [flow]."*
 
-## Red Flags — Upgrade the Flow
+## Deliver (all flows)
 
-If during a Quick Fix you discover:
-- The root cause is in a different service → upgrade to MEDIUM or LARGE
-- There are 5+ files to change → upgrade to MEDIUM
-- You need to create new APIs or pages → upgrade to LARGE
-
-Tell the user: **"This is bigger than expected. Upgrading to [flow name]."**
+Never auto-commit. `nl-verify`'s finishing menu owns the deliver prompt; this skill only guarantees that nothing is committed or pushed until the user picks "deliver" or says "commit" / "PR".
 
 ## What NOT to Do
 
 | Temptation | Why it's bad |
 |------------|-------------|
-| Skip debugging, jump to fixing | May fix symptom, not cause |
-| Skip planning for medium issues | Changes cascade without a map |
+| Skip debugging, jump to fixing | Fixes the symptom, not the cause |
+| Skip the plan for a MEDIUM issue | Changes cascade without a map |
+| Self-review or self-verify the changeset | Owner skills dispatch fresh reviewers |
+| Re-describe execution / review steps in Flow C | Duplicates `nl-research-plan-execute` and drifts from it |
 | Auto-commit after fixing | User may want to review first |
 | Stay in Quick Fix when it's clearly bigger | Scope creep without structure |
 | Write a 20-step plan for a 2-file fix | Over-engineering the process |
