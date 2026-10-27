@@ -1,7 +1,7 @@
 {
   "name": "nl-code-review",
-  "version": "1.4.0",
-  "description": "General-purpose code review skill that auto-detects tech stack and applies repo-aware review with optional adversarial pass",
+  "version": "1.5.0",
+  "description": "General-purpose code review skill that discovers repo conventions, reviews against the PR head, assigns tiers from a fixed table, and can post findings as inline PR comments",
   "author": {
     "name": "noellch",
     "url": "https://github.com/noellch"
@@ -13,9 +13,9 @@
     "code-review",
     "pr",
     "review",
-    "adversarial",
     "quality",
-    "general-purpose"
+    "general-purpose",
+    "inline-comments"
   ],
   "skills": "./skills/"
 }
