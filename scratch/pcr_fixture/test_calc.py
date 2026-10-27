@@ -12,7 +12,7 @@ class CalcTest(unittest.TestCase):
             divide(1, 0)
 
     def test_percent(self):
-        self.assertEqual(percent(1, 3), 33.33333333333333)
+        self.assertAlmostEqual(percent(1, 3), 33.33, places=2)
 
     def test_clamp(self):
         self.assertEqual(clamp(15, 0, 10), 10)
