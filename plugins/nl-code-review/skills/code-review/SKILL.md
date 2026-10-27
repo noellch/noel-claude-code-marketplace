@@ -63,7 +63,7 @@ Review in this priority order:
 
 1. **Security** — injection, auth bypass, data exposure, secrets committed in the diff, unsafe deserialization / SSRF, PII in logs
 2. **Correctness** — logic errors, race conditions, null handling
-3. **Contracts** — public API, DTO, event, or persisted schema changed? Find consumers with two independent searches (Pass 3 rules) → BREAKING if any break. Migration files: check for destructive or lock-holding operations (drop/rename column, non-concurrent index on a large table) even when auto-generated.
+3. **Contracts** — public API, DTO, event, CLI/CSV output, or persisted schema changed? Find consumers with two independent searches (Pass 3 rules) → BREAKING for each consumer that breaks, with its call site cited. No consumer found and the contract faces outward (HTTP response, exported file, published event)? That is not a finding at any tier: write `no consumer of X in this repo; external consumers unknown` under Unverified Claims, and if the change is load-bearing the verdict is Needs Discussion. Absence of an in-repo consumer is not evidence of an external one. Migration files: check for destructive or lock-holding operations (drop/rename column, non-concurrent index on a large table) even when auto-generated.
 4. **Error handling** — silent failures, swallowed exceptions. First check whether a swallow is intentional (comment, best-effort side call, ADR); an intentional one gets at most a Suggestion to log, never a re-raise.
 5. **Performance** — N+1 queries, unbounded loops, missing pagination
 6. **Tests** — are critical paths covered, and would the assertions fail if the bug came back? (subject not mocked away, no snapshot that enshrines the bug) Do existing tests need updating?
@@ -74,6 +74,7 @@ Review in this priority order:
 
 - Asserting absence ("fully rolled out", "no remaining callers") requires **two independent searches** with different keywords or conventions (snake_case and camelCase, old name and new name). One empty grep is not evidence of absence.
 - A claim you cannot verify stays a claim: list it under **Unverified Claims** in the output, and if it is load-bearing for the change, the verdict is **Needs Discussion** — never silently accept it.
+- The same rule governs your own premises. A consumer, an index, a router, a schema, a runtime setting you could not see in the repo is an Unverified Claim, not a finding at any tier; a finding needs the file:line that proves its premise.
 
 **Tests:** if the repo has a test command and the diff touches logic, run the tests covering the changed paths at `head` (the Step 0 worktree) and report the actual result. Fork PRs run someone else's code on this machine: unless the user asked for tests, write "Tests: not run (fork)". If you do not run them for any other reason, write "Tests: not run" — never imply they pass.
 
@@ -85,7 +86,7 @@ Severity classifies the defect; tier says what to do about it. Assign both from 
 |----------|----------|---------|
 | **SECURITY** | Exploitable vulnerability | Injection, auth bypass, data leak |
 | **BUG** | Incorrect behavior in production | Logic error, race condition, data loss |
-| **BREAKING** | Breaks existing consumers | API rename without migration, removed field, new required parameter |
+| **BREAKING** | Breaks a consumer you found in Pass 2.3 — cite its call site | API rename with a caller still on the old name, removed field a reader still uses, new required parameter at a call that omits it |
 | **PERF** | Recognisable degradation pattern — no benchmark needed | N+1 query, full table scan, unbounded loop |
 | **TEST** | Missing coverage for critical path | No test for new error handling, untested edge case |
 | **DESIGN** | Wrong layer / module / abstraction for this repo | SQL built in a handler when the repo has a data layer |
@@ -155,5 +156,6 @@ Rules live in the sections above; this table holds only the excuses that talk yo
 | "Only one file changed, no cross-repo check needed" | One file in a monorepo can break other services — search sibling services (scoped) |
 | "The diff hunks are enough" | Read the full file at `head`; the bug is usually in how the hunk meets the code around it |
 | "Obviously correct, quick skim is enough" | The obvious PRs are where subtle bugs hide |
+| "No consumer in this repo, so whoever is outside will break" | Unknown is not broken. BREAKING needs a cited call site; otherwise Unverified Claims, and Needs Discussion if load-bearing |
 
 Posting-specific failure modes are in the reference, beside the rules they break.
