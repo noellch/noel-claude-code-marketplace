@@ -35,10 +35,10 @@ Single entry point for issue resolution — classifies scope (small/medium/large
 /plugin install nl-handle-issue@noel
 ```
 
-- Auto-classifies issue scope: Quick Fix / Investigate & Fix / Plan & Build
-- Mandatory Investigation Report with root cause, reasoning chain, and confidence level
-- Chains sub-skills automatically (systematic-debugging, analyze-issue, research-plan-execute)
-- Flow upgrade detection: auto-escalates when scope is bigger than expected
+- Classifies scope from intake signals: Quick Fix / Investigate & Fix / Plan & Build
+- Mandatory Investigation Report — root cause, measured vs inferred evidence, confidence
+- Pure router: delegates to `nl-debug`, `cl-support:triage`, `nl-research-plan-execute`, `nl-verify`, `nl-create-pr`
+- Re-scopes in both directions once the investigation lands
 - Never auto-commits — waits for user instruction
 
 ### nl-pr-comment-resolve
