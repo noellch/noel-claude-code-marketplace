@@ -212,7 +212,7 @@ gh pr edit {N} --add-reviewer {login}
 
 ## Step 9: Report
 
-Done when every row of the tracking table has a terminal status and every posted reply has a URL:
+Done when every row of the tracking table has a terminal status, every posted reply has a URL, and every Handle row has been checked for recurrence (below):
 
 | # | Author | Action | Status | Commit | Reply |
 |---|--------|--------|--------|--------|-------|
@@ -221,7 +221,7 @@ Done when every row of the tracking table has a terminal status and every posted
 | 4 | @pm | Handle | replied (PR comment) | — | https://…#issuecomment-… |
 | 5 | coderabbit[bot] | Skip | skipped, no reply | — | — |
 
-Below the table: the test command and result, the push range (`abc1234..def5678`), who was re-requested, and any row that is not terminal with who decides it.
+Below the table: the test command and result, the push range (`abc1234..def5678`), who was re-requested, any row that is not terminal with who decides it, and recurrence. Recurrence: read the review threads of your previous three PRs on this repository (`gh pr list --state all --author @me --limit 4`, skip the current one; `gh api repos/{owner}/{repo}/pulls/{N}/comments --paginate`). A Handle row whose class of ask (not its wording) already appears there is a second occurrence — write `Rule candidate: <class> → <CLAUDE.md | review rubric | memory>`. The user decides whether it becomes a rule; you only surface it. None → `Rule candidate: none`.
 
 ## Edge Cases
 

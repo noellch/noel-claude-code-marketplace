@@ -38,7 +38,7 @@
     {
       "name": "nl-pr-comment-resolve",
       "source": "./plugins/nl-pr-comment-resolve",
-      "description": "Resolve PR review comments end to end: one confirmation gate, one commit per thread, tests before push, replies with commit links, PR-level comments answered, reviewers re-requested",
+      "description": "Resolve PR review comments end to end: one confirmation gate, one commit per thread, tests before push, replies with commit links, PR-level comments answered, reviewers re-requested, recurring asks surfaced as rule candidates",
       "license": "MIT",
       "keywords": ["pr", "review", "comments", "resolve", "github"]
     },
