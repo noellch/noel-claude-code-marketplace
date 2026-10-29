@@ -33,7 +33,7 @@ Per task:
 2. It asks questions? Answer completely before it proceeds.
 3. It implements, tests (TDD), commits, self-reviews, writes its report file.
 4. Generate the diff (below), dispatch a **task reviewer** with [references/task-reviewer-prompt.md](references/task-reviewer-prompt.md) — brief, report, diff, global constraints.
-5. Reviewer reports two verdicts: **spec compliance** and **code quality**. Not approved → dispatch a fix subagent for Critical/Important findings → re-review. Loop until both pass.
+5. Reviewer reports two verdicts: **spec compliance** and **code quality**. Not approved → dispatch a fix subagent for Critical/Important findings → re-review. A finding that survives a fix round is handled like BLOCKED: a more capable model carrying both rounds' findings, or split the task. A finding that survives two fix rounds goes to the human with the trail. Never a third round on the same finding, never the same model unchanged.
 6. Mark the task complete in the todo list and the progress ledger.
 
 After all tasks: **broad final review** — hand the whole-branch diff to `nl-code-review`. Then hand off to `nl-verify` for verification + finishing.
