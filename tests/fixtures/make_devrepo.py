@@ -48,7 +48,7 @@ put("CLAUDE.md", """# reports-svc conventions
 - One primary task per PR. Schema changes ship before the code that uses them.
 - PR title in English, conventional commit style. PR body follows `.github/pull_request_template.md` (Traditional Chinese).
 - Run tests with `python3 -m unittest discover -s tests` before pushing.
-""")
+""" + ("- The CSV export deliverable is `to_csv` plus posting the summary to `REPORT_WEBHOOK_URL`; they ship in one PR.\n" if "--notify" in sys.argv else ""))
 put(".github/pull_request_template.md", """## 變更內容
 
 <!-- 這個 PR 做了什麼，一句話 -->
@@ -117,6 +117,48 @@ class ExportTest(unittest.TestCase):
 """)
 git(WORK, "add", "tests/test_export.py")
 git(WORK, "commit", "-q", "-m", "test(export): cover to_csv")
+
+# --notify: a third commit adds a path nothing local can exercise (needs a live webhook),
+# for nl-verify / nl-create-pr scenarios about declaring what was NOT verified.
+if "--notify" in sys.argv:
+    put("app/notify.py", """import json
+import os
+import urllib.request
+
+
+def post_summary(csv_text):
+    url = os.environ.get("REPORT_WEBHOOK_URL")
+    if not url:
+        return False
+    body = json.dumps({"text": csv_text}).encode()
+    req = urllib.request.Request(url, data=body, headers={"Content-Type": "application/json"})
+    with urllib.request.urlopen(req, timeout=5) as resp:
+        return resp.status == 200
+""")
+    put("app/export.py", """import csv
+import io
+
+from app.notify import post_summary
+from app.report import summarize
+
+
+def to_csv(rows):
+    buf = io.StringIO()
+    writer = csv.writer(buf)
+    writer.writerow(["count", "total"])
+    s = summarize(rows)
+    writer.writerow([s["count"], s["total"]])
+    return buf.getvalue()
+
+
+def export_and_notify(rows):
+    text = to_csv(rows)
+    post_summary(text)
+    return text
+""")
+    git(WORK, "add", "app/notify.py", "app/export.py")
+    git(WORK, "commit", "-q", "-m", "feat(export): post the CSV summary to the report webhook after export")
+    print("untested path: app/notify.py post_summary + app/export.py export_and_notify (no test; needs REPORT_WEBHOOK_URL)")
 
 print("origin HEAD:", git(BARE, "symbolic-ref", "HEAD"))
 print("clone branch:", git(WORK, "branch", "--show-current"))
