@@ -31,7 +31,7 @@ Before claiming any status or expressing satisfaction:
 4. **VERIFY** — does the output confirm the claim?
    - No → state the actual status with evidence.
    - Yes → state the claim WITH the evidence.
-5. **ONLY THEN** — make the claim.
+5. **ONLY THEN** — make the claim, followed by one `Not verified: <behaviour> (<why>)` line per behaviour in scope that no command in this message exercised (no local webhook, no staging, no device). None → `Not verified: none`. A partial check never rounds up into the claim.
 
 Skip any step = claiming, not verifying.
 

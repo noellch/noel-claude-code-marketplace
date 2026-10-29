@@ -129,7 +129,7 @@
     {
       "name": "nl-verify",
       "source": "./plugins/nl-verify",
-      "description": "Verification gate (fresh evidence before any completion claim) plus clean branch finishing — deliver, merge, keep, or discard; the verify stage of research-plan-execute",
+      "description": "Verification gate (fresh evidence before any completion claim, unverified behaviour listed) plus clean branch finishing — deliver, merge, keep, or discard; the verify stage of research-plan-execute",
       "license": "MIT",
       "keywords": ["verify", "verification", "completion", "evidence", "finishing-branch", "merge", "discard", "regression", "tdd"]
     },
