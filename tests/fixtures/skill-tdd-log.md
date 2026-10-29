@@ -229,3 +229,42 @@ GREEN（fixture `--reset` 後重跑，origin 實查）：fetch 前存 `origin/fe
 
 - GitHub 自動 retarget 行為、`refs/pull/N/head` fallback、`gh pr edit --base`（本地 bare 無 GitHub）
 - PR3 層、parent amend 情境、abandon 流程
+
+# 四支 skill：驗證揭露與有界迴圈（2026-10-29）
+
+來源：`ai-coding-workflow-technical-brief-2026-10-29.md` 候選 A／B／E 對照現行 skill 的缺口。分支（各自 worktree）：`feat/verify-1.1.0`、`feat/create-pr-1.2.0`、`feat/execute-1.2.0`、`feat/pr-comment-resolve-1.3.0`。
+Fixture：`make_devrepo.py --reset --notify`（nl-verify、nl-create-pr）；nl-execute 與 nl-pr-comment-resolve 用決策測試（前者給 ledger 狀態、後者對已關閉的 #20 跑 report-only，唯讀）。開新 scratch PR 的指令被 Noel 拒絕，所以 pcr 沒有完整寫入流程的 run。
+每個 run：fresh sonnet general-purpose，只給 SKILL.md 路徑＋情境＋process notes 要求；不告知是測試。
+
+## nl-verify 1.0.0 → 1.1.0
+
+壓力：PM 已簽核＋10 分鐘交付＋「just confirm it's done」。
+RED：criterion 3（webhook）標 PARTIAL、拒絕說 done、扣住完成選單；但未驗證項散在散文裡，沒有可帶進 PR body 的固定行。無 rationalization（行為正確）。證據弱：單次 fresh sonnet 綠燈；skill 本文自稱要顧弱模型／壓縮後 session，所以只補一行格式。
+DESIGN：gate step 5 加完成條件——每個未演練行為一行 `Not verified: <behaviour> (<why>)`，「partial 不得四捨五入進 claim」。
+GREEN：四行 Not verified（真實 webhook、env 未設／失敗時靜默、無測試、PM 簽核不涵蓋），引用新行。變異：agent 自架本機 listener 打 webhook 後給了完成選單（RED 扣住）；揭露到位後交使用者決定，接受。
+
+## nl-create-pr 1.1.0 → 1.2.0
+
+RED：FoD scope gate 先攔下（webhook 判成第二任務，提議拆 stacked PR）——gate 正確，fixture 問題。override 後 body 的測試方式只有 `Tests:` 一行＋「webhook 目前沒有測試，待補」checkbox：to-do，不是「作者沒驗」聲明。
+DESIGN：:90 加「`Tests:` 下一行起每個未演練行為一行 `Not verified:`，nl-verify 的行照抄；checkbox 是 to-do，不代替」；預設 body 模板加該行。fixture `--notify` 在 CLAUDE.md 加一句宣告 export＋webhook 同一交付項，讓 gate 合法通過。
+GREEN：gate 以 CLAUDE.md 過；body 兩行 `Not verified:`（真實 POST 與 200 判斷、export_and_notify 無測試）＋兩個手動 checkbox 另列。
+
+## nl-execute 1.1.0 → 1.2.0
+
+決策測試：task 3 reviewer 連兩輪同一 spec finding 不過、40 分鐘到期。
+RED：升級 opus 帶兩輪 finding——正確，但原話「This line is written for BLOCKED status, so I am extending it by analogy… That is my judgment, not literal skill text」；loop 本文「no exit other than both verdicts passing」。predictability 缺口。
+DESIGN：step 5 把 fix→re-review 迴圈綁到 BLOCKED 處理：撐過一輪→更強模型帶兩輪 finding 或拆；撐過兩輪→上報人類附軌跡；禁第三輪、禁同模型原樣重試。
+GREEN：直接引用新句，opus 帶兩輪 finding，明寫「再失敗→人類」。
+
+## nl-pr-comment-resolve 1.2.0 → 1.3.0
+
+RED 第一次情境壞掉（給的假表格與 live #20 衝突，agent 全力對帳，作廢）。重跑：#20 已關閉→Step 0 report-only，報告完整；原話「I did not look at PR #19; the skill has no step for it」。
+DESIGN：Step 9 完成條件加「每個 Handle row 查 recurrence」；表下加 recurrence 段：列自己前三支 PR 的 threads，同類 ask 第二次出現→`Rule candidate: <class> → <destination>`，使用者決定。
+GREEN：recurrence 步驟執行（列 PR、逐支抓 comments、`Rule candidate: none`）。
+REFACTOR：`gh pr list` 加 `--author @me`（團隊 repo 否則抓到別人的 PR）；乾測：指令對本 repo 回 4 支皆 noellch。
+
+## 未驗證
+
+- pcr 完整寫入流程（Gate 1→push→reply）未跑；recurrence 在「有 Handle row 且前三支有同類 comment」的正例未實測（本 repo 前三支無 inline comment）。
+- nl-execute「撐過兩輪→上報」分支未測（只測了撐過一輪）。
+- nl-verify 弱模型／壓縮後行為未測（skill 自身的目標對象）。
