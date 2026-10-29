@@ -50,7 +50,7 @@ Single entry point for issue resolution — classifies scope (small/medium/large
 ```
 
 - Classifies scope from intake signals: Quick Fix / Investigate & Fix / Plan & Build
-- Mandatory Investigation Report — root cause, measured vs inferred evidence, confidence
+- Mandatory Investigation Report — root cause, tested hypothesis, measured vs inferred evidence, confidence, impact, action items with owners, decisions needed (absorbs the former `nl-asana-ticket:analyze-issue`)
 - Pure router: delegates to `nl-debug`, `cl-support:triage`, `nl-research-plan-execute`, `nl-verify`, `nl-create-pr`
 - Re-scopes in both directions once the investigation lands
 - Never auto-commits — waits for user instruction
