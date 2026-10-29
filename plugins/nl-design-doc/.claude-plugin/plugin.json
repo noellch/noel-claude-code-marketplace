@@ -1,0 +1,14 @@
+{
+  "name": "nl-design-doc",
+  "version": "1.0.0",
+  "description": "Write review-ready design docs in the team's house style — exemplars fetched live, decisions not instructions, one trade-off section per decision with a verdict, open questions capped to external facts",
+  "author": {
+    "name": "noellch",
+    "url": "https://github.com/noellch"
+  },
+  "homepage": "https://github.com/noellch/noel-claude-code-marketplace",
+  "repository": "https://github.com/noellch/noel-claude-code-marketplace",
+  "license": "MIT",
+  "keywords": ["design-doc", "design", "outline", "house-style", "trade-offs", "mermaid", "review"],
+  "skills": "./skills/"
+}
