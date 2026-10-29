@@ -59,7 +59,7 @@
     {
       "name": "nl-create-pr",
       "source": "./plugins/nl-create-pr",
-      "description": "Create pull requests with a FoD scope gate, repo-resolved base branch, keep-the-branch setup, verification line, and the repo's own PR template",
+      "description": "Create pull requests with a FoD scope gate, repo-resolved base branch, keep-the-branch setup, verification line with what was not verified, and the repo's own PR template",
       "license": "MIT",
       "keywords": ["pr", "pull-request", "git", "fod", "branch", "commit"]
     },

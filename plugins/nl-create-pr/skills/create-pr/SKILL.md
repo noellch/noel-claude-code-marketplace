@@ -87,7 +87,7 @@ git commit -m "<type>(<scope>): <short summary>"
 
 Match the repo's commit style (`git log --format=%s -15 origin/$BASE` shows it); the default is conventional commits in English with types `feat`, `fix`, `refactor`, `test`, `chore`, `docs`. A summary that needs "and" is two commits.
 
-**Verify before anything leaves the machine.** Run the repo's test command (CLAUDE.md, CI config, or nl-verify's evidence if that skill already ran). The result goes into the PR body as a line the reviewer can trust: `Tests: <command> → <result>`, or `Tests: not run (<reason>)`. A docs-only change still carries the line.
+**Verify before anything leaves the machine.** Run the repo's test command (CLAUDE.md, CI config, or nl-verify's evidence if that skill already ran). The result goes into the PR body as a line the reviewer can trust: `Tests: <command> → <result>`, or `Tests: not run (<reason>)`. A docs-only change still carries the line. Right under it, one `Not verified: <behaviour> (<why>)` line per behaviour the diff adds that nothing you ran exercised (nl-verify's lines go in verbatim when it ran). A checkbox is a to-do for someone; it does not tell the reviewer what you did not exercise.
 
 ## Phase 4: Push and Open
 
@@ -118,6 +118,7 @@ Default body when the repo has no template:
 
 ## How to Test
 Tests: <command> → <result>
+Not verified: <behaviour> (<why>) — omit when nothing is unverified
 - [ ] [Manual step, if any]
 
 ## Notes
