@@ -1,6 +1,6 @@
 ---
 name: handle-issue
-description: Use when assigned an issue, bug report, error message, traceback, or support ticket — classifies scope, routes to the owning nl-* skill, and makes sure every step runs to completion. Not for feature requests (those start at nl-grill or nl-research-plan-execute).
+description: Use when assigned an issue, bug report, error message, traceback, Asana issue ticket, or support ticket — classifies scope, routes to the owning nl-* skill, and makes sure every step runs to completion. Triggers on "分析 issue", "analyze ticket", "investigate bug". Not for feature requests (those start at nl-grill or nl-research-plan-execute).
 ---
 
 # Handle Issue
@@ -22,7 +22,7 @@ Single entry point for issue resolution: **intake → classify → route → ens
 | Input | Action |
 |-------|--------|
 | Asana **support** ticket URL (Support project, or a customer-reported bug — when unsure, ask) | Run `cl-support:triage` first — it owns intake and diagnosis. Its root cause **replaces** the flow's Investigate step: resume at Phase 2, then go straight to the Investigation Report. |
-| Other Asana task URL | Fetch via Asana MCP |
+| Other Asana task URL | Fetch via Asana MCP: description, **all** comments (earlier investigation lives there), custom fields (Priority, Product, Feature, Org ID), timeline (created, symptoms started, last known good). Search the same project for tickets with the same Feature or symptom; say so when that search is not possible |
 | GitHub issue URL | `gh issue view` |
 | Sentry issue URL | Fetch via Sentry MCP — event, stack, frequency |
 | Slack thread link | Read the thread; keep the link as the issue's key (ticket numbers in the thread may be reused) |
@@ -62,8 +62,10 @@ No plan. Small fixes need a correct diagnosis, not a document.
 ## Flow B: Investigate & Fix (MEDIUM)
 
 ```
-1. Investigate → nl-debug (errors / tracebacks)
-                 or nl-asana-ticket:analyze-issue (tickets not already triaged)
+1. Investigate → nl-debug (errors, tracebacks, anything reproducible)
+                 A ticket with nothing reproducible yet: Phase 1 intake + the
+                 Investigation Report below are the method — read the code before
+                 concluding; a cause without file:line is a guess
 2. Report      → Investigation Report — get user confirmation
 3. Plan        → 3-7 steps in the conversation: files to change, what each change does
                  Get user confirmation before touching code
@@ -94,7 +96,9 @@ Present this **before** any fix, and do not enter Plan / Fix until root cause is
 ```
 ## Investigation Report
 
-**Root Cause:** [one sentence — the cause, not the symptom]
+**Root Cause:** [one sentence — the cause, not the symptom, with file:line]
+
+**Hypothesis tested:** IF [condition] THEN [expected] BUT [observed] THEREFORE [cause] — one, testable, written before the code check that confirmed it
 
 **Measured:** [facts with evidence — file:line, command output, log excerpt]
 **Inferred:** [conclusions drawn from the measured facts, labelled as inference]
@@ -103,7 +107,14 @@ Present this **before** any fix, and do not enter Plan / Fix until root cause is
 
 **Confidence:** [High / Medium / Low — tied to what is measured vs inferred]
 
+**Impact:** scope [one org or all; how many] · severity [data loss / revenue / workaround] · urgency [SLA, escalation, next occurrence] · blast radius [what a fix could break; other callers]
+
 **Affected files:** [path:line for each change point]
+
+**Action items:**
+- [ ] [specific action] — [owner] — [why]
+
+**Decision needed:** [bug or intended behaviour change? fix or document? — omit when nothing is open]
 ```
 
 Two purposes: the user validates the reasoning before code changes, and the record survives the session.
@@ -136,3 +147,5 @@ Never auto-commit. `nl-verify`'s finishing menu owns the deliver prompt; this sk
 | Auto-commit after fixing | User may want to review first |
 | Stay in Quick Fix when it's clearly bigger | Scope creep without structure |
 | Write a 20-step plan for a 2-file fix | Over-engineering the process |
+| "Looks like a backend issue" | A cause is a file:line — `tag added in line/models.py:423 only when is_followed=True` |
+| "Need to investigate more" | A next step is a command — `query pbec_event for org 5338 to confirm the events exist` |

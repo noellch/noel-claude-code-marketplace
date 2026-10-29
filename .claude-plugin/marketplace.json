@@ -31,7 +31,7 @@
     {
       "name": "nl-handle-issue",
       "source": "./plugins/nl-handle-issue",
-      "description": "Single entry point for issue resolution: classifies scope, orchestrates investigation with mandatory root-cause report, and chains sub-skills from debugging to PR creation",
+      "description": "Single entry point for issue resolution: classifies scope, orchestrates investigation with a mandatory root-cause report (hypothesis, impact, action items), and chains sub-skills from debugging to PR creation",
       "license": "MIT",
       "keywords": ["issue", "bug", "fix", "debug", "investigate", "workflow", "dispatcher", "lifecycle"]
     },
