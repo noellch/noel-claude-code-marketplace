@@ -25,7 +25,8 @@ Asana ticket creation and issue investigation for Crescendo Lab.
 | Skill | Trigger | Description |
 |-------|---------|-------------|
 | `asana-ticket` | "create ticket", "open bug" | Standardized ticket creation with project routing and custom fields |
-| `analyze-issue` | "分析 issue", "analyze ticket" | Systematic investigation workflow for Support tickets |
+
+Issue investigation moved to `nl-handle-issue` (1.2.0); the former `analyze-issue` skill is gone.
 
 ### nl-code-review
 
