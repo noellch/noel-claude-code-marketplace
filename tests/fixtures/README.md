@@ -15,6 +15,8 @@ The main-based scenario for nl-create-pr needs no script: clone this repository,
 
 The first nl-code-review fixture (`orders-svc`, SQL injection + rename with a stale `scripts/` caller + N+1 + weak assertion + compliant intentional swallow) was built by hand and is not scripted; its contents are described in the log.
 
+nl-design-doc has no script either: the fixture is a real, not-yet-built topic with a finished research doc and no design doc to copy (`co/docs/plans/segment-custom-field-filter/`), and the ground truth is the three house-style design docs on Outline that the skill fetches. Runs are graded section by section against those docs; the table is in the log.
+
 ## Running a loop
 
 1. Build the fixture. Confirm tests are green on every branch and that the planted conditions manifest only where intended (each script prints this).

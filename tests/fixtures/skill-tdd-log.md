@@ -268,3 +268,89 @@ REFACTOR：`gh pr list` 加 `--author @me`（團隊 repo 否則抓到別人的 P
 - pcr 完整寫入流程（Gate 1→push→reply）未跑；recurrence 在「有 Handle row 且前三支有同類 comment」的正例未實測（本 repo 前三支無 inline comment）。
 - nl-execute「撐過兩輪→上報」分支未測（只測了撐過一輪）。
 - nl-verify 弱模型／壓縮後行為未測（skill 自身的目標對象）。
+
+---
+
+# nl-design-doc 1.0.0（新 skill）：writing-skills TDD log
+
+日期：2026-10-29
+分支：`feat/design-doc-1.0.0`
+Fixture：真實題目，無腳本——`co/docs/plans/segment-custom-field-filter/`（2026-07-31 研究定稿＋handoff，未動工、無任何設計文件可抄）；ground truth 是 Outline 上 Noel 的三份設計文件（`pin-e8pymlXIsk`、`api-OYKIQrIvi8`、`mini-app-aYaaDakBiG`），共同骨架整理在 side-session notes。
+情境壓力：「明天早上要給 reviewer」＋「研究都做完了，主要是把它整理成文件」（錨向摘要研究、寫成實作說明）。
+每個 run：fresh sonnet general-purpose，只給研究目錄＋三個 repo 路徑＋產出路徑；不告知是測試。GREEN 起多給 SKILL.md 路徑。
+**污染註記**：agent 在 co/ 下跑，context 帶 Noel 的 memory index；A 讀了 `feedback_design_doc_house_style` 但沒照它去 fetch 範本，B 照做 fetch 了。所以 baseline 是「有 memory、無 skill」——這就是 Noel 的真實環境，骨架大致會落地，量到的是 memory 保不住的部分。
+
+## RED（run A、B）
+
+| 觀察點 | A（18.7 KB，6 圖） | B（23 KB，3 圖） | 判定 |
+|---|---|---|---|
+| 動筆前 fetch Outline 範本 | 否：「我沒能 fetch Outline 上那兩份範例文件（沒搜），結構只靠 memory 描述」 | 是 | **variance**：A 因此沒有 `---`、Goals/Non-Goals 合併、跨領域變粗體標籤、少前提→設計表 |
+| 一句話 | 寫到 BQ 表名＋「沿用 Journey 定義」 | 寫到「offline BigQuery filter，查 customer_member_committed」 | **失敗**：一句話塞實作 |
+| 設計：每條線一張圖、生命週期、資料上只加…、失敗情境 subgraph | 按層切（後端／矩陣／前端／上線）；檔案路徑、`_SAFE_COLUMN_PATTERN`、`ScalarQueryParameter`、`uuid4().hex[:N]`、SQL block、「必須遵守的點」清單；無生命週期、無失敗圖、無資料段 | 有第一／二條線 ✔，但接著「後端新增的東西 1–4」（`audience/filters/v3_offline.py`、migration 檔名）、「前端新增的東西」、「產生的 SQL」×2、「實作時有四件事不能省」；無生命週期、無失敗圖、無資料段 | **失敗（核心）**：設計寫成實作手冊；失敗處理丟進未決問題（A）或一個節點（B） |
+| 取捨：每決定一節、選擇、對方理由、代價、粗體結論、對比圖 | 標題「決定一～六」；選擇 ✔；「結論：」粗體 ✔；對比圖 1/6 且無 ❌✅／未採用／採用；「估點維持 M」 | 標題描述式 ✔；第一節無選擇行（用表）；**對比圖 0**；粗體多用在「可以反悔」「必須排除」而非結論 | **失敗**：對比圖與結論句沒保證 |
+| 跨領域 | 粗體標籤非 `###`；上線方式與設計段重複 | `###` ✔；「測試」段列測試檔名；「含 migration 的變更要獨立成一個 PR」 | partial；B 漏 PR 切法 |
+| 未決問題 | **9 列**：UX 入口、i18n 命名空間、27 vs 99（已自己選了）、「要不要提示」、plan-tier… | **9 列**：同上＋slot 穩定性、多條件效能 | **失敗**：能自己決定的推給 PM／設計；範本 3–4 列只放外部事實 |
+| reviewer 焦點 | 3，寫成「X 看：…」 | 4，粗體斷言＋問句 ✔ | variance |
+| 內部編號 | 無票號；「估點 M」 | 背景資料「需求 REQ-0001」 | 外漏 |
+| 口吻／語言／H1 | 平實／zh-TW／無 H1 | 同 | 通過 |
+| 量到 vs 推論 | 自創 flag 名、category 27、參數形狀有標；「沿用既有告警」未標 | 「這是推論」「未量過」「只驗了 org 6394」 ✔ | B 較好 |
+
+原話（A）：「我沒能 fetch Outline 上那兩份範例文件（沒搜），結構只靠 memory 描述，可能與最新版有差。」
+原話（B）：「我自己的決定：filter 只存 custom_field_key…（research 沒定案，列入 reviewer 問題）」「flag 只需兩處是推論」
+
+## DESIGN（失敗 → lever）
+
+| 失敗 | lever | 落點 |
+|---|---|---|
+| 設計寫成實作手冊 | leading phrase **mechanism, not module**＋完成條件：設計段零路徑／class／SQL／「實作時」清單；「資料上只加…」與一張失敗情境 subgraph 圖必備 | Step 4、skeleton §6、self-check |
+| 對比圖／結論句沒保證 | 每決定完成條件：**選擇：**、對方最佳情境、代價、一句粗體收尾；reviewer 會推回的決定要對比圖（未採用 vs 採用，❌✅） | Step 4、skeleton §7 |
+| 未決問題灌決策 | Step 3「decide what to decide」：每個 open item 只能進 取捨（自己決定）或 未決（外部事實）其中一處；≤5 列；excuse 列 | Step 3、rationalization |
+| 一句話塞實作 | 完成條件：使用者拿到的結果＋一個粗體性質，不寫表／class／服務內部名 | skeleton §1 |
+| 內部編號外漏 | red flag＋self-check grep：`REQ-`、`#\d{3,}`、`PR\d`、`Task \d`、估點、工時；PR 順序只寫技術相依 | red flags、skeleton §9、self-check |
+| 沒 fetch 範本 → 結構漂移 | Step 1 硬閘：本 session fetch 三份；memory 回憶不算；完成條件「三份都在 context」 | Step 1、red flag、rationalization |
+| 前提表有無、reviewer 點數、圖密度 | skeleton reference：章節清單、每節一圖規則、「恰好三點」 | references/skeleton.md（去識別化，不含三份文件內文——repo 是 public） |
+
+Invocation：**model-invoked**（description 只寫 when）。理由：「幫我寫設計文件」這句現在會被通用的 `write-design-docs` 搶到；user-invoked 一忘就輸，而設計文件兩個月才三份。nl-grill／nl-research-plan-execute 可以指到它。
+分工：nl-grill 在前（問題與方向）、nl-domain-modeling 平行（glossary／ADR，取捨可引用）、plan.md／nl-plan-to-tickets 在後（任務、PR 切法，永不進文件）；`write-design-docs`、`doc-coauthoring` 同一句 trigger 給通用模板，建議停用。
+Leading words：house style、mechanism not module、trade-off。
+
+## GREEN（run C、D）
+
+| 觀察點 | C（24 KB，9 圖） | D（22 KB，10 圖） |
+|---|---|---|
+| 範本 fetch | 3/3，先於動筆 | 3/3 |
+| 一句話 | 使用者結果＋粗體「可以跟其他條件自由混用」 | 同形式，粗體「跟既有條件一樣能互相組合」 |
+| 設計 | 兩條線各一圖＋stateDiagram 生命週期＋資料上只加…＋失敗情境 A/B/C＋「為什麼前端不能搬 Journey 畫面」；零路徑／SQL block | 兩條線＋flowchart 生命週期＋資料上只加…＋失敗情境 A/B/C；零路徑／SQL block |
+| 取捨 | 10 節，皆有選擇；對比圖 4；三節以「這個決定可以反悔」收尾、無另一句粗體結論（agent 自報「不嚴格合規」） | 9 節，皆有選擇；對比圖 3；三節同樣以「可以反悔」收尾 |
+| 未決問題 | 3 列，皆外部事實（客戶要篩的欄位、產品接受 2 天延遲、CDH slot 穩定性） | 3 列，同 |
+| reviewer | 恰好 3，粗體斷言＋問句 | 同 |
+| 禁用字 grep | 0 | 0（mermaid 節點代號 S/M/L 被 grep 誤抓，agent 自行判定非估點） |
+| `---`／H1 | 10 條；Goals→Non-Goals 不加（agent：「比照範例」，與 skill 字面衝突） | 10 條；無 H1 |
+| 自己決定、不推 PM | category 27、單一入口、不限方案、不提示壞值、文案另開 key、重用 Journey 驗證 | 同一組＋「flag 只擋新增編輯」「條件存位置與型別」 |
+
+兩個 run 的設計內容不同（C 存欄位 id 計算時反查，D 存位置＋型別），都有寫成 選擇 並列為 reviewer 焦點——流程一致、結論分歧，符合「predictability 是過程不是輸出」。
+GREEN 自報的 skill 缺口：(1) 粗體結論 vs「可以反悔」收尾；(2) Goals／Non-Goals 之間要不要 `---`；(3) 取捨裡能不能寫 Rubato／Journey 這類服務名；(4) self-check 的 S／M／L 抓到 mermaid 節點；(5) 背景資料能不能放本地路徑。
+
+## REFACTOR
+
+改動：粗體收尾句＝結論或「這個決定可以反悔。」＋反悔代價；`---` 規則排除 Goals→Non-Goals；設計段准許服務／產品／表名、不准模組名；grep 列改 估點／工時；背景資料「reviewer 打得開的東西，含 repo 路徑」；Step 2 砍掉「函式名不寫行號」（RED 兩個 run 都自行這麼做，no-op）。SKILL.md 941 → 959 字，skeleton 946 → 983 字。
+
+乾測（fresh sonnet，只讀 SKILL.md＋skeleton，10 題）：10 題都引用新句決定——反悔收尾合規、Goals→Non-Goals 不加 `---`、服務名可／`.py` 與 class 名不可、節點 S/M/L 不再被抓、UX 入口進取捨由作者決定、REQ 不進背景資料、寫完停在發布前、五點砍成三點、有 memory 仍要 fetch、一句話含表名不合規。no-op 清單只剩「Show the local path」半句（弱），不砍。
+
+完整重跑 E（22.5 KB，10 圖，10 條 `---`）：範本 3/3、一句話合規、前提表 5 列、設計 3 條線＋生命週期＋失敗圖、零路徑／SQL、未決 3 列、reviewer 3 點、grep 0。新 variance：(1) 三個小決定（方案限制、文案、開關）合併成一節取捨，agent 自報「skill 沒規定」→ rationalization 表加一列「一決定一節，再小也是」；(2) 「型別與運算子要支援多少」同時出現在設計與取捨兩處標題；(3) 自報「矩陣表算不算設計內的清單」——當機制說明放進設計，接受。
+
+## 字數
+
+| 檔 | 1.0.0 |
+|---|---|
+| SKILL.md（每次載入） | 959 → 1003（加一列 rationalization） |
+| references/skeleton.md | 983 |
+
+## 未驗證
+
+- rationalization 新列「一決定一節」加完未重跑。
+- 第 5 步發布到 Outline（create_document／update_document、同 collection 與 parent、URL 回寫 metadata）：subagent 無法取得使用者 go，五個 run 都停在發布前；主對話實跑一次才算驗。
+- 修改既有設計文件（description 裡的 revised 分支）未測；只測了從研究寫新文件。
+- 不同題型（純前端、infra、跨 repo 契約）未測；五個 run 同一題。
+- 無 memory 的環境（別的 project、別台機器）下 Step 1 是否仍穩定 fetch：skill 字面上足夠，未實測。
+- 主對話（非 subagent）長 session／壓縮後的行為未測。

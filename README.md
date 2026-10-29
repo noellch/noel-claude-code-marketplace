@@ -42,6 +42,21 @@ General-purpose code review — convention discovery first, every read at the PR
 - PR-description claims are verified, absence needs two independent searches, tests are run at head and reported as run or not run
 - `--post`: one review with in-diff anchored inline comments, `suggestion` blocks applied and typechecked before posting, event always `COMMENT` (Request Changes and Approve stay human)
 
+### nl-design-doc
+
+Review-ready design docs in the team's house style — the three Outline exemplars are fetched live, 設計 describes mechanism not module, every decision gets a 取捨 section with a verdict, open questions stay capped to facts someone else holds.
+
+```bash
+/plugin install nl-design-doc@noel
+```
+
+- Model-invoked on 「幫我寫設計文件」／design doc requests when research, a spec, or a plan already exists
+- Hard gate: no section written before all three exemplars are in context
+- "Decide what to decide": author-decidable choices become **選擇：** sections; 未決問題 ≤ 5 rows, external facts only
+- 設計 with one diagram per 條線, a lifecycle, 「資料上只加…」, and a 失敗情境 subgraph diagram; zero file paths or SQL
+- Exactly three reviewer focus points; no ticket ids, PR codes, or sizing anywhere in the body
+- Publishes to Outline only on the user's go; local file in `docs/plans/<topic>/` first
+
 ### nl-handle-issue
 
 Single entry point for issue resolution — classifies scope (small/medium/large), orchestrates the right workflow, and ensures every step from investigation to delivery is completed.
