@@ -1,6 +1,6 @@
 {
   "name": "nl-create-pr",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Create pull requests with a FoD scope gate, repo-resolved base branch, keep-the-branch setup, verification line, and the repo's own PR template",
   "author": {
     "name": "noellch",
