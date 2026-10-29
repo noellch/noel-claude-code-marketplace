@@ -268,3 +268,34 @@ REFACTOR：`gh pr list` 加 `--author @me`（團隊 repo 否則抓到別人的 P
 - pcr 完整寫入流程（Gate 1→push→reply）未跑；recurrence 在「有 Handle row 且前三支有同類 comment」的正例未實測（本 repo 前三支無 inline comment）。
 - nl-execute「撐過兩輪→上報」分支未測（只測了撐過一輪）。
 - nl-verify 弱模型／壓縮後行為未測（skill 自身的目標對象）。
+
+# nl-handle-issue 1.1.0 → 1.2.0：吸收 nl-asana-ticket:analyze-issue（2026-10-29）
+
+Port／replace 規則：RED 的對照組是來源 skill（analyze-issue），不是 naive agent；parity 是地板。
+Fixture：`ticket-first-order-date.md`（模擬 Asana 票，MAAC Issues 非 Support）＋`orders-subtle` 在 `feature/order-pagination`（根因 = B2）。兩邊同一 prompt、fresh sonnet、不告知是測試；B 被告知 `cl-support:triage` 與 `nl-asana-ticket` 未安裝（模擬刪除後）。報告落檔後由第三個 fresh agent 按 `parity-rubric-issue-report.md` 15 項評分。
+
+## RED 差分（A = analyze-issue 1.2.0，B = handle-issue 1.1.0）
+
+兩邊根因都對（2e69aa5 ORDER BY 翻轉、reports.py:6-9 取 orders[0]）。
+- A 有 B 無：#4 IF/THEN/BUT/THEREFORE 假設、#7 Impact 四維、#8 Action items 含 owner／why、#9 bug-vs-intended。B 原話：無 action items，「only 2 points to confirm」。
+- B 有 A 無：#10 Measured/Inferred、#11 Ruled out、#12 Confidence、#13 Affected files 專段。
+- 兩邊都無：#6 同類票（A 的 skill 有這步，agent 因無 Asana 跳過且未寫明）。
+- 分數：A 9 YES／3 PARTIAL／3 NO；B 9 YES／4 PARTIAL／2 NO。
+
+## DESIGN → GREEN（handle-issue 1.2.0）
+
+- frontmatter：加 Asana issue ticket 與「分析 issue」「analyze ticket」「investigate bug」觸發（analyze-issue 的 trigger 搬家，否則路由失靈）。
+- Phase 1「Other Asana task URL」：讀全部 comments、custom fields、timeline；搜同 project 同 Feature／症狀的票，查不了要明說（#6）。
+- Flow B step 1：刪 analyze-issue 指向；不可重現的票 → intake＋Investigation Report 就是方法，「cause without file:line is a guess」。
+- Investigation Report：加 Hypothesis tested（#4）、Impact 一行四維（#7）、Action items `- [ ] action — owner — why`（#8）、Decision needed（#9）。
+- What NOT to Do：加 analyze-issue 的兩列 anti-pattern（「looks like a backend issue」「need to investigate more」）。
+- nl-asana-ticket 1.3.0：刪 `skills/analyze-issue/`，README 註明搬家。
+
+GREEN（B′ = handle-issue 1.2.0，同 fixture 重跑，同 grader 規則）：15 項全部 ≥ A；#4/#6/#7/#8/#9 皆 YES；「A 有 B′ 無」為空。B′ process notes 引用新的 anti-pattern 列決定 action items 寫法。
+Rubric 外：B′ 多做 init commit 對照重現（HEAD 紅、舊版綠）；A 多抓到分頁 tiebreaker 與 export CSV 下游風險——調查者差異，兩支 skill 都沒有「順手找相鄰 bug」規則，不補。
+
+## 未驗證
+
+- 真 Asana MCP 路徑（fetch、同 project 搜尋）未跑，fixture 是匯出檔。
+- cl-support:triage 分流（Support 票）未在本輪測。
+- 30 分鐘歸因停手未觸發（根因 5 分鐘內找到）。
