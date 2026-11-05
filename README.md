@@ -28,6 +28,21 @@ Asana ticket creation and issue investigation for Crescendo Lab.
 
 Issue investigation moved to `nl-handle-issue` (1.2.0); the former `analyze-issue` skill is gone.
 
+### nl-audit
+
+Whole-repository health audit — weaknesses, optimisation leads, and vulnerable/outdated/unused dependencies. A grep count is a lead, not a finding; coverage is declared before the scan; every finding is scored by a fresh agent before it reaches the report.
+
+```bash
+/plugin install nl-audit@noel
+```
+
+- User-invoked: `/nl-audit` on the repo to review end to end; self-contained (no other skill called, subagents via the Agent tool)
+- Phase 0 reads CLAUDE.md / AGENTS.md / docs guides and CI config first, then writes the already-enforced list, the lens list, and the out-of-scope list before any scan
+- Phase 1 runs the dependency commands for the stack (pnpm / pip / Go): vulnerable, outdated, unused — each row carries direct?, prod-path?, reachable?; "from memory" is not a row
+- Phase 2 lenses in parallel subagents: security, hotspots, quality, tests-ci, build-ops; every finding has severity, evidence tier (實證／讀碼／推測), decisive `file:line`, recommendation, effort
+- Phase 3 fresh-agent triage scores 0–100; ≥ 50 is a finding, 25–49 goes to 未驗證, never silently dropped; pre-existing is not a false positive
+- Report in 繁體中文 to `~/.nl-audit/<repo>/<date>.md`, never inside the repo
+
 ### nl-code-review
 
 General-purpose code review — convention discovery first, every read at the PR head, severity and tier from fixed tables, optional one-shot posting as inline PR comments.

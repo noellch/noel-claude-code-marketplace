@@ -354,3 +354,102 @@ GREEN 自報的 skill 缺口：(1) 粗體結論 vs「可以反悔」收尾；(2)
 - 不同題型（純前端、infra、跨 repo 契約）未測；五個 run 同一題。
 - 無 memory 的環境（別的 project、別台機器）下 Step 1 是否仍穩定 fetch：skill 字面上足夠，未實測。
 - 主對話（非 subagent）長 session／壓縮後的行為未測。
+
+# nl-audit 1.0.0（新 skill）：writing-skills TDD log
+
+日期：2026-11-05
+分支：`feat/nl-audit`
+Fixture：真實 repo，無腳本——Grazioso（React 19 + TS，pnpm）與 rubato（Django + DRF，pip）。兩份 baseline 報告含真實安全發現，只留在本機 `/tmp/audit-baseline/`，不進 repo；log 只記失敗模式。
+Ground truth（可機械檢查的缺口）：(1) 三種依賴檢查——漏洞／過期／未用——各自有沒有實跑指令；(2) 動筆前有沒有讀 CLAUDE.md／AGENTS.md／docs 規範；(3) 每條 finding 有沒有嚴重度、證據等級、file:line；(4) 報告結構與語言是否固定；(5) 「沒看」的範圍是事後坦白還是事前規劃。
+情境壓力：「下午要跟團隊 review，大概一小時內要」（時間壓力 → 錨向「靜態掃一掃就好」）。
+每個 run：fresh sonnet general-purpose，只給 repo 路徑、一句需求、產出路徑；不告知是測試、不給 skill。
+**污染註記**：agent 在 co/ 下跑，context 帶 Noel 的 memory index 與 co/CLAUDE.md（service map、GCP project）。rubato 那次讀了 AGENTS.md，Grazioso 那次沒讀——同一環境兩種行為，量到的是「有 memory 也保不住」的部分。
+
+## RED（run A = Grazioso、run B = rubato）
+
+| 觀察點 | A（65 行，英文） | B（81 行，繁中） | 判定 |
+|---|---|---|---|
+| 讀專案規範文件 | 否：直接讀 package.json／tsconfig／workflows；報告有「違反 docs/_core.md」一條，但是事後 grep 到的，不是先讀規範 | 是：讀了 AGENTS.md、pyproject、Dockerfile、ci.yaml | **variance** |
+| 依賴：漏洞 | 跑了 `pnpm audit --prod`，但 reachability 未評，transitive 與 direct 混報 | **沒跑** pip-audit；CVE「憑記憶」，自報「請用 pip-audit 驗證」 | **失敗**：B 整段依賴是推測 |
+| 依賴：過期 | **沒跑** `pnpm outdated`：「"behind" is from my knowledge of major versions, not verified」 | 沒跑 `pip list --outdated`；用 `.venv` 實裝版本 + 記憶判「較舊」 | **失敗**：兩邊都憑印象 |
+| 依賴：未用 | 無（只抓到一個 type-only import 的 dep，且「only inspected the first 5 grep hits」） | 無 | **失敗**：兩邊都沒做 |
+| 嚴重度 | 「ordered by how much I would raise them」＋括號 medium-high／medium／low | H1–H5 ＋「中度風險」＋「可優化」三層 | **variance**：無共同分級，無 effort |
+| 證據等級 | 混在內文（「not verified」「I did not check」散落 20+ 處） | 每條標【實證】【讀碼】【推測】，H1、H2 各做一個小 PoC | **variance**：B 自創了好制度，A 沒有 |
+| file:line | 大多有 | 大多有 | 通過 |
+| 計數可信度 | 「Every number below is a grep count… and is rough」；`any` regex 自承漏 `Record<string, any>` | 「計數有掃描限制」；`except Exception` 691 處未區分 | **失敗**：裸 grep 計數當 finding |
+| 覆蓋規劃 | 事後列「Not covered」：無 tsc／lint／test／build、無 bundle 分析、Playwright／Zodios／websocket 未讀 | 事後列「沒涵蓋」：~50 處 ViewSet 未逐一看、packages/ bigquery/ pubsub_pull/ 未讀、N+1 未查 | **失敗**：覆蓋是做到哪算哪，不是先定 lens 再掃 |
+| 安全項讀完 | 否：issue_comment workflow「I only read the trigger/`if:` lines… Worth a closer look」 | 是：對兩個高風險項做了 PoC | **variance** |
+| 已被 CI／lint 擋的不重報 | 否：報 `eslint-disable` 數、tsconfig 缺旗標，沒對照 CI 已跑什麼 | 部分：有查 ci.yaml 缺依賴掃描 | partial |
+| 報告結構 | Size snapshot → Weaknesses（8）→ Optimization → Things that look good → Not covered | 前提更正 → 優先弱點 → 中度 → 依賴 → 可優化 → 做得好 → 沒涵蓋 | **variance**：語言、分段、排序都不同 |
+| 語言 | 英文 | 繁中 | **variance**（使用者用繁中問） |
+| 跑工具 vs 只 grep | 1 個指令（pnpm audit） | 3 支自寫腳本（grep wrapper、AST 掃描、PoC） | variance |
+| 改 repo | 否 | 否（只寫 /tmp） | 通過 |
+
+原話（A）：「I did not run `pnpm outdated`, so "behind" is from my knowledge of major versions, not verified.」「I only inspected the first 5 grep hits; confirm all are type-only.」「Every number below is a grep count over `src/` and is rough.」
+原話（B）：「CVE 對應是我憑記憶，沒有掃描器佐證，請用 pip-audit / osv-scanner 驗證。」「沒跑依賴漏洞掃描器、bandit、測試或型別檢查。」「全 repo 約 50 處 Create/Update/DestroyModelMixin 的 ViewSet 沒逐一看。」
+
+RED 總結——兩個 run 共同失敗四件、分歧六件：
+- 共同失敗：依賴三項全靠記憶或沒做；裸 grep 計數當 finding；覆蓋事後坦白而非事前規劃；無共同嚴重度／effort 制度。
+- 分歧（predictability 破口）：讀不讀規範、證據等級有無、安全項讀不讀完、報告語言與結構、跑不跑工具、direct／transitive 分不分。
+- B 自創的【實證／讀碼／推測】三級與 PoC 習慣值得收進 skill 當固定制度。
+
+## DESIGN（失敗 → lever）
+
+| 失敗 | lever | 落點 |
+|---|---|---|
+| 依賴三項憑記憶或沒做 | 完成條件：漏洞／過期／未用三欄各要有**本次實跑**的指令輸出；「憑記憶」「印象中較舊」列 rationalization；指令表按 stack 給 | Phase 1、references/dep-commands.md |
+| 裸 grep 計數當 finding | 規則：計數只能是 **lead**，不是 finding；要成 finding 必須抽樣讀 ≥3 處並標 evidence tier；heuristic 計數只能寫量級 | Phase 2 規則、red flag |
+| 覆蓋事後坦白 | Phase 0 完成條件：lens 清單與「明示不看」在動手前寫進報告；Not covered 段只准放事前宣告的項目＋執行中發現的新未知 | Phase 0、report-template |
+| 無共同嚴重度／effort | 單一制度：CRITICAL／HIGH／MEDIUM／LOW ＋ effort S／M／L；依賴的 P0–P4 映射到同一套（P0→CRITICAL、P1→HIGH、P2→MEDIUM、P3–P4→LOW）；每條 finding 固定七欄 | finding schema、references/lens-checklists.md |
+| 讀不讀規範（variance） | Phase 0 硬閘：CLAUDE.md／AGENTS.md／docs 規範類必讀，產出「已被 CI／lint 擋」清單；finding 若規範已擋 → 不報；規範寫了 code 沒做 → 報 | Phase 0 |
+| 證據等級有無（variance） | 收 run B 的制度為固定欄位：**實證**（跑過）／**讀碼**（讀過沒跑）／**推測**（需確認）；CRITICAL／HIGH 必須 ≥ 讀碼，且 triage 時要求唯讀 PoC 或改列「未驗證」 | finding schema、Phase 3 |
+| 安全項讀一半就交 | lens 完成條件：每條 security finding 的「detection」必須引到決定性那行（不是 trigger 行）；讀一半 → 列「未驗證」不列弱點 | Phase 2 security lens |
+| 報告語言／結構漂移 | 固定模板、繁中；落 `~/.nl-audit/<repo>/<YYYY-MM-DD>.md`（Noel 決定：不進 repo） | Phase 4、references/report-template.md |
+| direct／transitive、prod／dev 混報 | dep 輸出表強制四欄：package、direct?、prod-path?、reachability；transitive 且不可達 → LOW | Phase 1 |
+| 發現者自評 | Phase 3 另派 fresh agent 打分 0–100；rubric 改自官方 code-review，但「pre-existing」**不是**誤報（audit 的對象就是既有碼）；<70 進「未驗證」不丟 | Phase 3、references/scoring-rubric.md |
+
+Invocation：**user-invoked**（`disable-model-invocation: true`，`/nl-audit`）。理由：全專案體檢是使用者主動發起、成本高（多 subagent）；「看一下這段 code」不該誤觸；沒有其他 nl-* 需要呼叫它。
+自包含：不呼叫任何 skill（無 Skill tool）；subagent 用 Agent tool，model 用文字分級（同 nl-execute）；指令與 checklist 全在 references/。
+Leading words：lens、evidence tier、reachability、triage。
+分工：nl-handle-issue 在後（單一弱點要修 → 開 issue）；nl-asana-ticket 在後（finding → ticket）；nl-kb kb-collect 可收報告。
+
+## GREEN（run C = Grazioso，fresh sonnet，給 SKILL.md 路徑；同一句需求＋時間壓力）
+
+產出：`~/.nl-audit/Grazioso/2026-11-05.md`（295 行，繁中），repo working tree 維持 clean。對照 RED 五條 ground truth：
+
+| Ground truth | RED A | C | 判定 |
+|---|---|---|---|
+| 依賴三欄各有實跑指令 | 只跑 audit；outdated 憑記憶；未用無 | `pnpm audit --prod/--json`、`pnpm outdated`、`pnpm dlx knip --dependencies`＋逐一 grep 確認；每張表標題附指令 | **通過** |
+| 動筆前讀規範 | 否 | CLAUDE.md、AGENTS.md、docs/_core.md、docs/validation-and-ci.md、eslint/tsconfig、husky、三個 workflow；already-enforced 清單先於任何 lens 寫定 | **通過** |
+| finding 有 severity／evidence／file:line | 散落 | 25 條全有，格式 `<id> <標題> <severity>／<evidence>／score <n>` | **通過** |
+| 報告結構與語言固定 | 英文、自創段落 | 繁中、模板 11 段齊全 | **通過** |
+| 覆蓋事前宣告 | 事後坦白 | Phase 0 out-of-scope 寫進 `/tmp/audit-gz/common.txt` 再派 lens；未涵蓋段＝事前清單＋各 lens DID NOT COVER | **通過** |
+
+其他觀察：5 個 lens 平行、model 明確指定（security opus、其餘 sonnet）；triage 5 個 haiku 批次，修正了 lens 的四個數字並推翻兩條依賴誤報；direct／transitive／reachability 四欄齊；`@line/bot-sdk` 36 處 import 全 type-only 由主 agent 親驗；CI 環境保護規則用 `gh api` 實證。
+C 自報的 skill 缺口（原話摘要）：(1)「Phase 3 沒說依賴 findings 要不要打分」；(2)「分數門檻和 rubric 互相打架：50 分＝確認為真但影響低，門檻卻把 <70 全丟到未驗證」；(3)「本機 node_modules 與 lockfile 不同步，skill 沒提」；(4)「transitive 且不可達 → LOW 要證明不可達，skill 不准跑 build」；(5)「lens prompt 說要貼段落，我改成讓 agent 讀檔，skill 沒說行不行」；(6)「檔案讀取被權限分類器擋下，skill 沒說怎麼處理」；(7)(8) knip 載入失敗與 `--dependencies` 旗標。
+C 的偏離：lens 段落沒貼進 prompt、改給路徑（skill 原文要求貼）；結果仍合規，故改 skill 放寬而非視為失敗。
+
+## REFACTOR
+
+改動（對應 C 的 8 條缺口）：Phase 1 加「安裝樹 vs lockfile 先對一次、哪欄讀哪邊要寫明」、「dep 列進 schema 成 `dep-<n>`、一樣送 Phase 3」、「證明不可達可跑專案自己的 build／analyser script」；Phase 2 lens 段落「貼或給路徑＋標題」、read-only 定義為「不改 repo 檔，跑專案 script 到其 output 目錄可」、「被拒讀的檔列 DID NOT COVER，不換工具繞」；Phase 3 門檻改 ≥50 進報告（rubric 50＝確認為真但影響低）、25–49 未驗證、0 丟棄留紀錄；dep-commands.md 加 `knip --dependencies`、knip 載入失敗 → 註明不完整＋depcheck 第二來源、lockfile／node_modules 讀源差異；report-template 加「安裝樹與 lockfile 是否一致」欄。
+
+乾測（fresh sonnet，只讀 SKILL.md＋references，10 題）：10 題都引用新句決定——dep 列要打分且 id `dep-<n>`、55 分 LOW 進報告、lockfile 為準並寫 header、可跑 analyser script、路徑＋標題可代替貼段落、拒讀列 DID NOT COVER、knip 失敗跑 depcheck 且不憑單一工具、無 Agent tool 自己依序跑 lens、CRITICAL 推測進未驗證、路徑與繁中與 repo 外。乾測另抓 4 縫並已補：Vocabulary 叫 `dependencies` 但 id 用 `dep-<n>`（schema 明寫）；dispatch 樣板仍寫「paste」（改為二擇一）；security LOW 落哪段（模板明寫：security／dep 全進弱點，其他 lens 的 MEDIUM／LOW 進可優化）；無 Agent tool 時 Phase 3 怎麼辦（自評一遍＋run log 標「triage：自評」）。
+
+## 字數
+
+| 檔 | 1.0.0 |
+|---|---|
+| SKILL.md（user-invoked，不常駐） | 1187 → 1340 → 1368 |
+| references/lens-checklists.md | 2005 → 2017 |
+| references/dep-commands.md | 864 → 1006 |
+| references/scoring-rubric.md | 396 → 414 |
+| references/report-template.md | 204 → 218 |
+
+## 未驗證
+
+- REFACTOR 後未做完整重跑（只做乾測）；C 的報告是 REFACTOR 前的 skill 產出。
+- Python／Go 專案未跑 GREEN（RED 的 run B 是 rubato，但 GREEN 只跑了 Grazioso）；`pip-audit`／`govulncheck` 路徑是從 dep-audit 與 ln-621 抄的，本輪未實跑。
+- Monorepo（多 package）情境未測。
+- 「無 Agent tool」退路（自己跑 lens、自評 triage）只過乾測，未實跑。
+- 時間壓力更大（「30 分鐘」）時 lens 清單縮減是否仍守 evidence 規則，未測。
+- 主對話（非 subagent）直接執行 `/nl-audit` 未測；五個 run 都是 subagent 執行。

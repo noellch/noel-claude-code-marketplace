@@ -1,0 +1,14 @@
+{
+  "name": "nl-audit",
+  "version": "1.0.0",
+  "description": "Whole-repository health audit — weaknesses, optimisation leads, and vulnerable/outdated/unused dependencies — with evidence tiers, fresh-agent triage, and a fixed-format report outside the repo",
+  "author": {
+    "name": "noellch",
+    "url": "https://github.com/noellch"
+  },
+  "homepage": "https://github.com/noellch/noel-claude-code-marketplace",
+  "repository": "https://github.com/noellch/noel-claude-code-marketplace",
+  "license": "MIT",
+  "keywords": ["audit", "security", "dependencies", "vulnerabilities", "outdated", "unused", "tech-debt", "code-health", "optimization"],
+  "skills": "./skills/"
+}
