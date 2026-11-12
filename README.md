@@ -164,6 +164,20 @@ Execute an approved plan via subagents — the execute stage of nl-research-plan
 - Explicit model selection per dispatch; implementer status protocol (DONE / DONE_WITH_CONCERNS / NEEDS_CONTEXT / BLOCKED); no pre-judging reviewer findings
 - Superpowers-free (pure git, no bundled scripts); hands the final review to nl-code-review and finishing to nl-verify
 
+### nl-explain
+
+Re-explain an agent's output when the reader says 「簡單說」/「看不懂」.
+
+```bash
+/plugin install nl-explain@noel
+```
+
+- Model-invoked on comprehension complaints (簡單說, 看不懂, 白話, 說到我理解, ELI5)
+- Term inventory (drop / translate / define with a frontend analogy), mental model before findings
+- Two shapes: status/decision skeleton (≤ 200 chars) vs mechanism timeline (≤ 800 chars), enforced by a bundled character-count gate (`scripts/count.py`); certainty tagged inline
+- Second-round 「還是看不懂」 changes representation instead of shortening again
+- Ships a UserPromptSubmit hook that tells the model to invoke the skill when the prompt ends in a short complaint — in long sessions the description alone was skipped 2 times out of 5
+
 ## License
 
 MIT

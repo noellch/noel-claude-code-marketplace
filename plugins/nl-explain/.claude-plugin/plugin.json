@@ -1,0 +1,36 @@
+{
+  "name": "nl-explain",
+  "version": "1.0.0",
+  "description": "Re-explain dense agent output so the reader actually understands it — term inventory, mental model first, shape by message type, inline certainty, teach-back check",
+  "author": {
+    "name": "noellch",
+    "url": "https://github.com/noellch"
+  },
+  "homepage": "https://github.com/noellch/noel-claude-code-marketplace",
+  "repository": "https://github.com/noellch/noel-claude-code-marketplace",
+  "license": "MIT",
+  "keywords": [
+    "explain",
+    "plain-language",
+    "curse-of-knowledge",
+    "teach-back",
+    "簡單說",
+    "看不懂",
+    "agent-output",
+    "readability"
+  ],
+  "skills": "./skills/",
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/trigger.py\"",
+            "timeout": 5
+          }
+        ]
+      }
+    ]
+  }
+}

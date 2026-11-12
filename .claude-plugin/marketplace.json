@@ -160,6 +160,13 @@
       "description": "Clean-room readback: information-isolated readers narrate what code actually does so a human can confirm the mechanism matches their intent",
       "license": "MIT",
       "keywords": ["readback", "clean-room", "verification", "mechanism", "behavior-narrative", "agent-written-code"]
+    },
+    {
+      "name": "nl-explain",
+      "source": "./plugins/nl-explain",
+      "description": "Re-explain dense agent output so the reader actually understands it — term inventory, mental model first, shape by message type, teach-back check",
+      "license": "MIT",
+      "keywords": ["explain", "plain-language", "curse-of-knowledge", "teach-back", "agent-output"]
     }
   ]
 }
