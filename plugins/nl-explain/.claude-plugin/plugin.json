@@ -1,6 +1,6 @@
 {
   "name": "nl-explain",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Re-explain dense agent output so the reader actually understands it — term inventory, mental model first, shape by message type, inline certainty, teach-back check",
   "author": {
     "name": "noellch",
