@@ -1,6 +1,6 @@
 ---
 name: code-review
-description: Use when reviewing a GitHub PR, a local branch, or uncommitted changes before merge, or when user says "review PR", "code review", "check my changes", "review my code", "幫我 review", "看一下這個 PR", or asks to post review comments to a PR ("留 inline comment", "post inline comments"). Not for fixing build errors or resolving existing review comments.
+description: Use when reviewing a GitHub PR, a local branch, or uncommitted changes before merge, or when user says "review PR", "code review", "check my changes", "review my code", "幫我 review", "看一下這個 PR", or asks to post review comments to a PR ("留 inline comment", "post inline comments"), or to re-check a PR whose author answered your review ("他有回了"). Not for fixing build errors or resolving existing review comments.
 ---
 
 # General-Purpose Code Review
@@ -27,6 +27,8 @@ Structured code review with mandatory convention discovery, standardized output,
 | PR number / URL | **PR** | `gh pr view {N} --json baseRefName -q .baseRefName` | `gh pr view {N} --json headRefOid -q .headRefOid` |
 | A branch name; or "check my changes" on a clean tree (the branch is then `HEAD`) | **Local** | `git merge-base {branch} {default}`, default = `git symbolic-ref -q --short refs/remotes/origin/HEAD`, else `main` | `{branch}` |
 | "check my changes" with uncommitted work | **Local** | `HEAD` | the working tree |
+
+**Re-review** — a PR you already reviewed whose author has since replied or pushed ("他有回了"): PR mode, but `base` = the `commit_id` of your last review (`gh api repos/{owner}/{repo}/pulls/{N}/reviews --jq '[.[] | select(.user.login=="<you>")][-1].commit_id'`). Read the `base..head` diff in full-file context and the author's thread replies (`gh api repos/{owner}/{repo}/pulls/{N}/comments --paginate`); code outside that diff was already reviewed and is not re-read. How each previous thread is closed and what the new review carries: [references/posting-inline-comments.md](references/posting-inline-comments.md) § Re-review.
 
 A branch that already has an open PR (`gh pr list --head {branch} --json number`) is PR mode. Never fabricate a PR number. In Local mode skip every `gh pr *` command and use the Local header variant — do not improvise a different structure.
 

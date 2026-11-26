@@ -55,7 +55,8 @@ General-purpose code review — convention discovery first, every read at the PR
 - Mandatory convention discovery before any code: CLAUDE.md at head (with `@file` imports), tech stack, what CI actually enforces, PR intent, existing review threads
 - Severity → Tier tables instead of gut feeling; BREAKING needs a cited broken call site, unknown external consumers go to Unverified Claims and Needs Discussion
 - PR-description claims are verified, absence needs two independent searches, tests are run at head and reported as run or not run
-- `--post`: one review with in-diff anchored inline comments, `suggestion` blocks applied and typechecked before posting, event always `COMMENT` (Request Changes and Approve stay human)
+- `--post`: one review with in-diff anchored inline comments, `suggestion` blocks applied and typechecked before posting, event `APPROVE` when no Blocking or Should fix survives verification, otherwise `COMMENT` (Request Changes stays human); each comment leads with its tier emoji — 🛑 Blocking, 🔧 Should fix, 🧹 Nit, 📝 Context; choices the author must make go under 需要決定, unmet merge prerequisites under 合併前置
+- Re-review after the author answers: reads only the diff since your last review, closes each old thread as fixed / accepted / still open, approves when nothing is open
 
 ### nl-design-doc
 
